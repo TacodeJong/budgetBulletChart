@@ -1,0 +1,199 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "bullet_years",
+  "position": {
+    "x": 16,
+    "y": 16,
+    "width": 1334,
+    "height": 736,
+    "z": 0,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "budgetBulletChart7C2E9A41D85B4F36A0E1B9C47D62F158",
+    "query": {
+      "queryState": {
+        "period": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Maand"
+                }
+              },
+              "queryRef": "Data.Maand",
+              "nativeQueryRef": "Maand",
+              "active": true
+            }
+          ]
+        },
+        "component": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Component"
+                }
+              },
+              "queryRef": "Data.Component",
+              "nativeQueryRef": "Component",
+              "active": true
+            }
+          ]
+        },
+        "budget": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Jaarbegroting 2025"
+                }
+              },
+              "queryRef": "Data.Jaarbegroting 2025",
+              "nativeQueryRef": "Jaarbegroting 2025"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Jaarbegroting 2026"
+                }
+              },
+              "queryRef": "Data.Jaarbegroting 2026",
+              "nativeQueryRef": "Jaarbegroting 2026"
+            }
+          ]
+        },
+        "actual": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Realisatie YTD 2025"
+                }
+              },
+              "queryRef": "Data.Realisatie YTD 2025",
+              "nativeQueryRef": "Realisatie YTD 2025"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Realisatie YTD 2026"
+                }
+              },
+              "queryRef": "Data.Realisatie YTD 2026",
+              "nativeQueryRef": "Realisatie YTD 2026"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "grouping": [
+        {
+          "properties": {
+            "periodSort": {
+              "expr": {
+                "Literal": {
+                  "Value": "'data'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "colors": [
+        {
+          "properties": {
+            "highlightOverrun": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "comparison": [
+        {
+          "properties": {
+            "pair1Name": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2025'"
+                }
+              }
+            },
+            "pair2Name": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2026'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Jaarvergelijking 2025 vs 2026'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "bullet_legend",
+  "position": {
+    "x": 16,
+    "y": 16,
+    "width": 1000,
+    "height": 736,
+    "z": 0,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "budgetBulletChart7C2E9A41D85B4F36A0E1B9C47D62F158",
+    "query": {
+      "queryState": {
+        "period": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Maand"
+                }
+              },
+              "queryRef": "Data.Maand",
+              "nativeQueryRef": "Maand",
+              "active": true
+            }
+          ]
+        },
+        "group": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Component"
+                }
+              },
+              "queryRef": "Data.Component",
+              "nativeQueryRef": "Component",
+              "active": true
+            }
+          ]
+        },
+        "legend": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Soort"
+                }
+              },
+              "queryRef": "Data.Soort",
+              "nativeQueryRef": "Soort",
+              "active": true
+            }
+          ]
+        },
+        "budget": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Jaarbegroting"
+                }
+              },
+              "queryRef": "Data.Jaarbegroting",
+              "nativeQueryRef": "Jaarbegroting"
+            }
+          ]
+        },
+        "actual": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Realisatie YTD"
+                }
+              },
+              "queryRef": "Data.Realisatie YTD",
+              "nativeQueryRef": "Realisatie YTD"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "grouping": [
+        {
+          "properties": {
+            "periodSort": {
+              "expr": {
+                "Literal": {
+                  "Value": "'data'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "layout": [
+        {
+          "properties": {
+            "arrangement": {
+              "expr": {
+                "Literal": {
+                  "Value": "'stack'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Begroting gekleurd per soort (legenda-veld)'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -219,6 +219,10 @@ export function buildModel(dataView: any, host: ModelHost, options: ModelOptions
     const rowCount = periodCol.values ? periodCol.values.length : 0;
     const comparisonCount = Math.max(budgetCols.length, actualCols.length, 1);
 
+    const yearPairs = comparisonCount === 2 && differOnlyByNumbers(
+        comparisonName(comparisonColumn(budgetCols, 0), comparisonColumn(actualCols, 0), 0),
+        comparisonName(comparisonColumn(budgetCols, 1), comparisonColumn(actualCols, 1), 1)
+    );
     for (let row = 0; row < rowCount; row += 1) {
         const raws = periodCols.map(column => readValue(column, row));
         if (raws.every(raw => raw == null || raw === "")) continue;
@@ -268,7 +272,7 @@ export function buildModel(dataView: any, host: ModelHost, options: ModelOptions
             const budgetCol = comparisonColumn(budgetCols, comparisonIndex);
             const actualCol = comparisonColumn(actualCols, comparisonIndex);
             const namedKind = measurePairKind(budgetCol, actualCol, options.revenueValues);
-            const fallbackKind = comparisonCount === 2 ? (comparisonIndex === 0 ? "revenue" : "cost") : null;
+            const fallbackKind = comparisonCount === 2 && !yearPairs ? (comparisonIndex === 0 ? "revenue" : "cost") : null;
             if (component && (namedKind || fallbackKind) && component !== (namedKind || fallbackKind)) continue;
 
             const budget = scale(readNumber(budgetCol, row), sign);
@@ -480,6 +484,11 @@ function readNumber(column: any, index: number): number | null {
 function comparisonColumn(columns: any[], index: number): any {
     if (!columns.length) return null;
     return columns.length === 1 ? columns[0] : columns[index] || null;
+}
+
+function differOnlyByNumbers(left: string, right: string): boolean {
+    const stem = (name: string) => (name || "").toLowerCase().replace(/[-+]?\s*\d+\s*(jr|yr|y)?\b/g, "").replace(/\s+/g, " ").trim();
+    return left !== right && stem(left) === stem(right);
 }
 
 function measurePairKind(budgetColumn: any, actualColumn: any, revenueValues: string[]): "revenue" | "cost" | null {

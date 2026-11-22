@@ -1,0 +1,265 @@
+table Data
+	lineageTag: 8ff51f03-5345-8e5b-a872-61c6e82b3dd9
+
+	measure 'Jaarbegroting' = SUM ( Data[Begroting2026] )
+		formatString: #,0
+		lineageTag: c7507e8b-55c4-c8ba-f9de-17153740aaf9
+
+	measure 'Realisatie YTD' = 
+			VAR m = MAX ( Data[MaandNr] )
+			RETURN
+				CALCULATE ( SUM ( Data[Realisatie2026] ), FILTER ( ALL ( Data[Maand], Data[MaandNr] ), Data[MaandNr] <= m ) )
+		formatString: #,0
+		lineageTag: c62e882c-f13a-df0d-f852-e5332d817fd6
+
+	measure 'Target YTD' = 
+			DIVIDE ( [Jaarbegroting] * MAX ( Data[MaandNr] ), 12 )
+		formatString: #,0
+		lineageTag: 29fac8e4-c5e0-35bd-c9e3-bb1423c16462
+
+	measure 'Jaarbegroting 2025' = SUM ( Data[Begroting2025] )
+		formatString: #,0
+		lineageTag: 234ed3f8-2be0-d880-64fe-8bafa0ab6e3e
+
+	measure 'Realisatie YTD 2025' = 
+			VAR m = MAX ( Data[MaandNr] )
+			RETURN
+				CALCULATE ( SUM ( Data[Realisatie2025] ), FILTER ( ALL ( Data[Maand], Data[MaandNr] ), Data[MaandNr] <= m ) )
+		formatString: #,0
+		lineageTag: d064e338-9796-d5ee-1e6e-19de8b974a84
+
+	measure 'Jaarbegroting 2026' = [Jaarbegroting]
+		formatString: #,0
+		lineageTag: 03538b30-7fe1-ea14-addc-42efaf2b3524
+
+	measure 'Realisatie YTD 2026' = [Realisatie YTD]
+		formatString: #,0
+		lineageTag: 27dfa4ef-ef66-1aa2-1aa1-42cb99cdcccd
+
+	column Maand
+		dataType: string
+		lineageTag: f0f0111b-1fdc-8cab-e33b-998f9856d5cf
+		summarizeBy: none
+		sourceColumn: Maand
+		sortByColumn: MaandNr
+
+		annotation SummarizationSetBy = Automatic
+
+	column MaandNr
+		dataType: int64
+		lineageTag: b40ee1f6-9688-cafd-aff6-486da90220b3
+		summarizeBy: none
+		sourceColumn: MaandNr
+
+		annotation SummarizationSetBy = Automatic
+
+	column Afdeling
+		dataType: string
+		lineageTag: b2a93680-0628-04ab-f098-7d2db87289d4
+		summarizeBy: none
+		sourceColumn: Afdeling
+
+		annotation SummarizationSetBy = Automatic
+
+	column Component
+		dataType: string
+		lineageTag: e2834fdd-8672-edc4-4bd0-61afc1f95ffc
+		summarizeBy: none
+		sourceColumn: Component
+
+		annotation SummarizationSetBy = Automatic
+
+	column Soort
+		dataType: string
+		lineageTag: 6c160400-7fa5-957c-0b72-23cef0706aa9
+		summarizeBy: none
+		sourceColumn: Soort
+
+		annotation SummarizationSetBy = Automatic
+
+	column Begroting2026
+		dataType: double
+		formatString: #,0
+		lineageTag: ec782ca2-b840-8768-abb4-8fc5b44241b2
+		summarizeBy: sum
+		sourceColumn: Begroting2026
+		isHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Realisatie2026
+		dataType: double
+		formatString: #,0
+		lineageTag: 83e4b705-4d8a-8740-ffbd-e0a048d6e12e
+		summarizeBy: sum
+		sourceColumn: Realisatie2026
+		isHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Begroting2025
+		dataType: double
+		formatString: #,0
+		lineageTag: f73998aa-e866-bd9b-bf07-a00a4f03789a
+		summarizeBy: sum
+		sourceColumn: Begroting2025
+		isHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Realisatie2025
+		dataType: double
+		formatString: #,0
+		lineageTag: 8b983419-7652-6f8d-0191-645a7a3b3fc3
+		summarizeBy: sum
+		sourceColumn: Realisatie2025
+		isHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Data = m
+		mode: import
+		source = ```
+				let
+				    Source = #table(type table [Maand = text, MaandNr = Int64.Type, Afdeling = text, Component = text, Soort = text, Begroting2026 = number, Realisatie2026 = number, Begroting2025 = number, Realisatie2025 = number], {
+					{"jan", 1, "Noord", "Opbrengsten", "Subsidies", 600000, 45690, 564000, 35530},
+					{"feb", 2, "Noord", "Opbrengsten", "Subsidies", 600000, 62191, 564000, 51007},
+					{"mrt", 3, "Noord", "Opbrengsten", "Subsidies", 600000, 51169, 564000, 57438},
+					{"apr", 4, "Noord", "Opbrengsten", "Subsidies", 600000, 37508, 564000, 40304},
+					{"mei", 5, "Noord", "Opbrengsten", "Subsidies", 600000, 52050, 564000, 38288},
+					{"jun", 6, "Noord", "Opbrengsten", "Subsidies", 600000, 61964, 564000, 55941},
+					{"jul", 7, "Noord", "Opbrengsten", "Subsidies", 600000, 44867, 564000, 53408},
+					{"aug", 8, "Noord", "Opbrengsten", "Subsidies", 600000, 39359, 564000, 36408},
+					{"sep", 9, "Noord", "Opbrengsten", "Subsidies", 600000, 57875, 564000, 43322},
+					{"jan", 1, "Noord", "Opbrengsten", "Verkopen", 600000, 42415, 564000, 35289},
+					{"feb", 2, "Noord", "Opbrengsten", "Verkopen", 600000, 60830, 564000, 47563},
+					{"mrt", 3, "Noord", "Opbrengsten", "Verkopen", 600000, 54794, 564000, 58566},
+					{"apr", 4, "Noord", "Opbrengsten", "Verkopen", 600000, 37934, 564000, 43456},
+					{"mei", 5, "Noord", "Opbrengsten", "Verkopen", 600000, 48315, 564000, 36347},
+					{"jun", 6, "Noord", "Opbrengsten", "Verkopen", 600000, 62500, 564000, 53289},
+					{"jul", 7, "Noord", "Opbrengsten", "Verkopen", 600000, 48464, 564000, 56032},
+					{"aug", 8, "Noord", "Opbrengsten", "Verkopen", 600000, 37896, 564000, 38384},
+					{"sep", 9, "Noord", "Opbrengsten", "Verkopen", 600000, 54655, 564000, 40188},
+					{"jan", 1, "Noord", "Kosten", "Personeel", 550000, 41882, 517000, 32569},
+					{"feb", 2, "Noord", "Kosten", "Personeel", 550000, 57008, 517000, 46756},
+					{"mrt", 3, "Noord", "Kosten", "Personeel", 550000, 46905, 517000, 52651},
+					{"apr", 4, "Noord", "Kosten", "Personeel", 550000, 34382, 517000, 36945},
+					{"mei", 5, "Noord", "Kosten", "Personeel", 550000, 47713, 517000, 35097},
+					{"jun", 6, "Noord", "Kosten", "Personeel", 550000, 56800, 517000, 51279},
+					{"jul", 7, "Noord", "Kosten", "Personeel", 550000, 41128, 517000, 48957},
+					{"aug", 8, "Noord", "Kosten", "Personeel", 550000, 36079, 517000, 33374},
+					{"sep", 9, "Noord", "Kosten", "Personeel", 550000, 53052, 517000, 39711},
+					{"jan", 1, "Noord", "Kosten", "Materieel", 250000, 19037, 235000, 14804},
+					{"feb", 2, "Noord", "Kosten", "Materieel", 250000, 25913, 235000, 21253},
+					{"mrt", 3, "Noord", "Kosten", "Materieel", 250000, 21320, 235000, 23932},
+					{"apr", 4, "Noord", "Kosten", "Materieel", 250000, 15628, 235000, 16793},
+					{"mei", 5, "Noord", "Kosten", "Materieel", 250000, 21688, 235000, 15953},
+					{"jun", 6, "Noord", "Kosten", "Materieel", 250000, 25818, 235000, 23309},
+					{"jul", 7, "Noord", "Kosten", "Materieel", 250000, 18694, 235000, 22253},
+					{"aug", 8, "Noord", "Kosten", "Materieel", 250000, 16400, 235000, 15170},
+					{"sep", 9, "Noord", "Kosten", "Materieel", 250000, 24115, 235000, 18051},
+					{"jan", 1, "Noord", "Kosten", "Overig", 150000, 9532, 141000, 9468},
+					{"feb", 2, "Noord", "Kosten", "Overig", 150000, 13854, 141000, 10210},
+					{"mrt", 3, "Noord", "Kosten", "Overig", 150000, 15119, 141000, 14429},
+					{"apr", 4, "Noord", "Kosten", "Overig", 150000, 10472, 141000, 12600},
+					{"mei", 5, "Noord", "Kosten", "Overig", 150000, 10404, 141000, 8852},
+					{"jun", 6, "Noord", "Kosten", "Overig", 150000, 15069, 141000, 11647},
+					{"jul", 7, "Noord", "Kosten", "Overig", 150000, 13934, 141000, 14675},
+					{"aug", 8, "Noord", "Kosten", "Overig", 150000, 9562, 141000, 11100},
+					{"sep", 9, "Noord", "Kosten", "Overig", 150000, 11823, 141000, 8993},
+					{"jan", 1, "Midden", "Opbrengsten", "Subsidies", 840000, 80562, 789600, 60128},
+					{"feb", 2, "Midden", "Opbrengsten", "Subsidies", 840000, 82476, 789600, 81843},
+					{"mrt", 3, "Midden", "Opbrengsten", "Subsidies", 840000, 56223, 789600, 67338},
+					{"apr", 4, "Midden", "Opbrengsten", "Subsidies", 840000, 61074, 789600, 49360},
+					{"mei", 5, "Midden", "Opbrengsten", "Subsidies", 840000, 86077, 789600, 68498},
+					{"jun", 6, "Midden", "Opbrengsten", "Subsidies", 840000, 74783, 789600, 81544},
+					{"jul", 7, "Midden", "Opbrengsten", "Subsidies", 840000, 52690, 789600, 59045},
+					{"aug", 8, "Midden", "Opbrengsten", "Subsidies", 840000, 69678, 789600, 51797},
+					{"sep", 9, "Midden", "Opbrengsten", "Subsidies", 840000, 87393, 789600, 76164},
+					{"jan", 1, "Midden", "Opbrengsten", "Verkopen", 840000, 58467, 789600, 39368},
+					{"feb", 2, "Midden", "Opbrengsten", "Verkopen", 840000, 68045, 789600, 63602},
+					{"mrt", 3, "Midden", "Opbrengsten", "Verkopen", 840000, 42527, 789600, 55659},
+					{"apr", 4, "Midden", "Opbrengsten", "Verkopen", 840000, 39525, 789600, 33472},
+					{"mei", 5, "Midden", "Opbrengsten", "Verkopen", 840000, 65817, 789600, 47132},
+					{"jun", 6, "Midden", "Opbrengsten", "Verkopen", 840000, 62044, 789600, 65800},
+					{"jul", 7, "Midden", "Opbrengsten", "Verkopen", 840000, 36724, 789600, 47329},
+					{"aug", 8, "Midden", "Opbrengsten", "Verkopen", 840000, 47022, 789600, 33421},
+					{"sep", 9, "Midden", "Opbrengsten", "Verkopen", 840000, 69688, 789600, 55476},
+					{"jan", 1, "Midden", "Kosten", "Personeel", 770000, 73849, 723800, 55117},
+					{"feb", 2, "Midden", "Kosten", "Personeel", 770000, 75603, 723800, 75023},
+					{"mrt", 3, "Midden", "Kosten", "Personeel", 770000, 51538, 723800, 61726},
+					{"apr", 4, "Midden", "Kosten", "Personeel", 770000, 55985, 723800, 45247},
+					{"mei", 5, "Midden", "Kosten", "Personeel", 770000, 78904, 723800, 62790},
+					{"jun", 6, "Midden", "Kosten", "Personeel", 770000, 68551, 723800, 74749},
+					{"jul", 7, "Midden", "Kosten", "Personeel", 770000, 48299, 723800, 54124},
+					{"aug", 8, "Midden", "Kosten", "Personeel", 770000, 63871, 723800, 47480},
+					{"sep", 9, "Midden", "Kosten", "Personeel", 770000, 80110, 723800, 69817},
+					{"jan", 1, "Midden", "Kosten", "Materieel", 350000, 33568, 329000, 25053},
+					{"feb", 2, "Midden", "Kosten", "Materieel", 350000, 34365, 329000, 34101},
+					{"mrt", 3, "Midden", "Kosten", "Materieel", 350000, 23426, 329000, 28057},
+					{"apr", 4, "Midden", "Kosten", "Materieel", 350000, 25448, 329000, 20567},
+					{"mei", 5, "Midden", "Kosten", "Materieel", 350000, 35866, 329000, 28541},
+					{"jun", 6, "Midden", "Kosten", "Materieel", 350000, 31159, 329000, 33977},
+					{"jul", 7, "Midden", "Kosten", "Materieel", 350000, 21954, 329000, 24602},
+					{"aug", 8, "Midden", "Kosten", "Materieel", 350000, 29032, 329000, 21582},
+					{"sep", 9, "Midden", "Kosten", "Materieel", 350000, 36414, 329000, 31735},
+					{"jan", 1, "Midden", "Kosten", "Overig", 210000, 16409, 197400, 12545},
+					{"feb", 2, "Midden", "Kosten", "Overig", 210000, 21842, 197400, 18231},
+					{"mrt", 3, "Midden", "Kosten", "Overig", 210000, 17472, 197400, 19896},
+					{"apr", 4, "Midden", "Kosten", "Overig", 210000, 13165, 197400, 13781},
+					{"mei", 5, "Midden", "Kosten", "Overig", 210000, 18645, 197400, 13692},
+					{"jun", 6, "Midden", "Kosten", "Overig", 210000, 21540, 197400, 19830},
+					{"jul", 7, "Midden", "Kosten", "Overig", 210000, 15314, 197400, 18337},
+					{"aug", 8, "Midden", "Kosten", "Overig", 210000, 14023, 197400, 12583},
+					{"sep", 9, "Midden", "Kosten", "Overig", 210000, 20582, 197400, 15559},
+					{"jan", 1, "Zuid", "Opbrengsten", "Subsidies", 480000, 30238, 451200, 30926},
+					{"feb", 2, "Zuid", "Opbrengsten", "Subsidies", 480000, 43410, 451200, 31896},
+					{"mrt", 3, "Zuid", "Opbrengsten", "Subsidies", 480000, 48883, 451200, 45744},
+					{"apr", 4, "Zuid", "Opbrengsten", "Subsidies", 480000, 34301, 451200, 41205},
+					{"mei", 5, "Zuid", "Opbrengsten", "Subsidies", 480000, 32586, 451200, 28527},
+					{"jun", 6, "Zuid", "Opbrengsten", "Subsidies", 480000, 47609, 451200, 36333},
+					{"jul", 7, "Zuid", "Opbrengsten", "Subsidies", 480000, 45454, 451200, 47000},
+					{"aug", 8, "Zuid", "Opbrengsten", "Subsidies", 480000, 30985, 451200, 36445},
+					{"sep", 9, "Zuid", "Opbrengsten", "Subsidies", 480000, 36869, 451200, 28498},
+					{"jan", 1, "Zuid", "Opbrengsten", "Verkopen", 480000, 30033, 451200, 33180},
+					{"feb", 2, "Zuid", "Opbrengsten", "Verkopen", 480000, 40479, 451200, 29943},
+					{"mrt", 3, "Zuid", "Opbrengsten", "Verkopen", 480000, 49843, 451200, 43993},
+					{"apr", 4, "Zuid", "Opbrengsten", "Verkopen", 480000, 36984, 451200, 43610},
+					{"mei", 5, "Zuid", "Opbrengsten", "Verkopen", 480000, 30934, 451200, 29658},
+					{"jun", 6, "Zuid", "Opbrengsten", "Verkopen", 480000, 45352, 451200, 33637},
+					{"jul", 7, "Zuid", "Opbrengsten", "Verkopen", 480000, 47687, 451200, 46563},
+					{"aug", 8, "Zuid", "Opbrengsten", "Verkopen", 480000, 32667, 451200, 39253},
+					{"sep", 9, "Zuid", "Opbrengsten", "Verkopen", 480000, 34203, 451200, 28211},
+					{"jan", 1, "Zuid", "Kosten", "Personeel", 440000, 27718, 413600, 28349},
+					{"feb", 2, "Zuid", "Kosten", "Personeel", 440000, 39792, 413600, 29238},
+					{"mrt", 3, "Zuid", "Kosten", "Personeel", 440000, 44809, 413600, 41932},
+					{"apr", 4, "Zuid", "Kosten", "Personeel", 440000, 31443, 413600, 37772},
+					{"mei", 5, "Zuid", "Kosten", "Personeel", 440000, 29870, 413600, 26149},
+					{"jun", 6, "Zuid", "Kosten", "Personeel", 440000, 43642, 413600, 33305},
+					{"jul", 7, "Zuid", "Kosten", "Personeel", 440000, 41666, 413600, 43083},
+					{"aug", 8, "Zuid", "Kosten", "Personeel", 440000, 28403, 413600, 33408},
+					{"sep", 9, "Zuid", "Kosten", "Personeel", 440000, 33797, 413600, 26123},
+					{"jan", 1, "Zuid", "Kosten", "Materieel", 200000, 20099, 188000, 19936},
+					{"feb", 2, "Zuid", "Kosten", "Materieel", 200000, 25587, 188000, 20340},
+					{"mrt", 3, "Zuid", "Kosten", "Materieel", 200000, 27868, 188000, 26110},
+					{"apr", 4, "Zuid", "Kosten", "Materieel", 200000, 21792, 188000, 24219},
+					{"mei", 5, "Zuid", "Kosten", "Materieel", 200000, 21077, 188000, 18936},
+					{"jun", 6, "Zuid", "Kosten", "Materieel", 200000, 27337, 188000, 22189},
+					{"jul", 7, "Zuid", "Kosten", "Materieel", 200000, 26439, 188000, 26633},
+					{"aug", 8, "Zuid", "Kosten", "Materieel", 200000, 20410, 188000, 22235},
+					{"sep", 9, "Zuid", "Kosten", "Materieel", 200000, 22862, 188000, 18924},
+					{"jan", 1, "Zuid", "Kosten", "Overig", 120000, 8058, 112800, 9659},
+					{"feb", 2, "Zuid", "Kosten", "Overig", 120000, 8689, 112800, 7050},
+					{"mrt", 3, "Zuid", "Kosten", "Overig", 120000, 12280, 112800, 9746},
+					{"apr", 4, "Zuid", "Kosten", "Overig", 120000, 10724, 112800, 11660},
+					{"mei", 5, "Zuid", "Kosten", "Overig", 120000, 7534, 112800, 8471},
+					{"jun", 6, "Zuid", "Kosten", "Overig", 120000, 9912, 112800, 7379},
+					{"jul", 7, "Zuid", "Kosten", "Overig", 120000, 12489, 112800, 10850},
+					{"aug", 8, "Zuid", "Kosten", "Overig", 120000, 9447, 112800, 11047},
+					{"sep", 9, "Zuid", "Kosten", "Overig", 120000, 7654, 112800, 7526}
+				})
+				in
+				    Source
+				```
+
+	annotation PBI_ResultType = Table

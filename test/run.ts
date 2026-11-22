@@ -256,6 +256,19 @@ assert.deepEqual(withTargets.panels[0].cells.map(cell => cell.target), [5, null,
 assert.equal(withTargets.names.target, "Target 2025");
 assert.equal(!!buildModel(dataView, host, options()).hasTarget, false);
 
+const yearsWithComponent = buildModel({
+    categorical: {
+        categories: [column("period", "Periode", [1, 1]), column("component", "Component", ["Opbrengsten", "Kosten"])],
+        values: [
+            column("budget", "Jaarbegroting 2025", [10, 8]),
+            column("budget", "Jaarbegroting 2026", [12, 9]),
+            column("actual", "Realisatie YTD 2025", [1, 2]),
+            column("actual", "Realisatie YTD 2026", [3, 4])
+        ]
+    }
+}, host, options());
+assert.deepEqual(yearsWithComponent.panels[0].cells.map(cell => [cell.kind, cell.budget]), [["revenue", 10], ["revenue", 12], ["cost", 8], ["cost", 9]]);
+
 const legendColumn = column("legend", "Soort", ["Personeel", "Materieel", "Personeel", "Materieel"], undefined,
     [{ colors: { legendFill: { solid: { color: "#123456" } } } }, null, null, null]);
 const withLegend = buildModel({

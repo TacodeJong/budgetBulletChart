@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "BudgetBulletChart-sample"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "13fc1e7c-93ea-47cc-b9c6-2a8b79beb5c8"
+  }
+}
