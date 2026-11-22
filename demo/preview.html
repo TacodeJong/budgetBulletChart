@@ -5,11 +5,14 @@
     <title>Budget vs actual preview</title>
     <style>
         html, body { margin: 0; background: #f1f5f9; font-family: "Segoe UI", sans-serif; }
-        #host { width: 960px; height: 640px; margin: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06); }
+        /* Large enough for showcase shots so layout never needs scrollbars */
+        #host { width: 1280px; height: 860px; margin: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06); }
         #log { margin: 0 20px 20px; min-height: 20px; color: #323130; font-size: 12px; }
         .bva-host { display: flex; flex-direction: column; overflow: hidden; }
-        .bva-scroll { flex: 1 1 auto; min-height: 0; overflow: auto; }
+        .bva-scroll { flex: 1 1 auto; min-height: 0; overflow: hidden; }
         .bva-scroll svg { display: block; }
+        body.shot #log { display: none; }
+        body.shot #host { margin: 0; border: 0; border-radius: 0; box-shadow: none; }
     </style>
     <script>
         var modules = {};

@@ -9,6 +9,11 @@ const query = new URLSearchParams(location.search);
 new URLSearchParams(location.hash.startsWith("#") ? location.hash.slice(1) : "").forEach((value, key) => {
     query.set(key, value);
 });
+if (query.get("shot") === "1") document.body.classList.add("shot");
+const hostWidth = Number(query.get("w") || 0);
+const hostHeight = Number(query.get("h") || 0);
+if (hostWidth > 0) host.style.width = `${hostWidth}px`;
+if (hostHeight > 0) host.style.height = `${hostHeight}px`;
 const palette = ["#118DFF", "#12239E", "#E66C37", "#6B007B", "#E044A7"];
 
 function labelBox(): LabelBoxStyle {
