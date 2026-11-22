@@ -16,7 +16,7 @@ Power BI custom visual for **annual budget versus year-to-date actuals**, with o
 
 ## Install
 
-1. Download the latest `.pbiviz` from [Releases](https://github.com/TacodeJong/budgetBulletChart/releases) or build locally (`npm install` → `pbiviz package`).
+1. Download [`dist/*.pbiviz`](dist/) from this repo (or [Releases](https://github.com/TacodeJong/budgetBulletChart/releases) / `npm install` → `pbiviz package`).
 2. In Power BI Desktop: **Insert → More visuals → From a file** and select the `.pbiviz`.
 
 ## Sample report
@@ -25,6 +25,7 @@ Power BI custom visual for **annual budget versus year-to-date actuals**, with o
 |------|-------------|
 | [`samples/BudgetBulletChart-sample.pbix`](samples/BudgetBulletChart-sample.pbix) | Ready-to-open sample report |
 | [`samples/pbip/`](samples/pbip/) | Same report as a Power BI Project (`.pbip`) |
+| [`dist/`](dist/) | Packaged `.pbiviz` |
 | [`samples/budget-sample.csv`](samples/budget-sample.csv) | Source data |
 
 Showcase pages:
