@@ -1,10 +1,10 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
-  "name": "bullet_years",
+  "name": "bullet_legend",
   "position": {
     "x": 16,
     "y": 16,
-    "width": 1334,
+    "width": 1000,
     "height": 736,
     "z": 0,
     "tabOrder": 0
@@ -32,7 +32,7 @@
             }
           ]
         },
-        "component": {
+        "group": {
           "projections": [
             {
               "field": {
@@ -51,6 +51,25 @@
             }
           ]
         },
+        "legend": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Soort"
+                }
+              },
+              "queryRef": "Data.Soort",
+              "nativeQueryRef": "Soort",
+              "active": true
+            }
+          ]
+        },
         "budget": {
           "projections": [
             {
@@ -61,25 +80,11 @@
                       "Entity": "Data"
                     }
                   },
-                  "Property": "Jaarbegroting 2025"
+                  "Property": "Jaarbegroting"
                 }
               },
-              "queryRef": "Data.Jaarbegroting 2025",
-              "nativeQueryRef": "Jaarbegroting 2025"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Data"
-                    }
-                  },
-                  "Property": "Jaarbegroting 2026"
-                }
-              },
-              "queryRef": "Data.Jaarbegroting 2026",
-              "nativeQueryRef": "Jaarbegroting 2026"
+              "queryRef": "Data.Jaarbegroting",
+              "nativeQueryRef": "Jaarbegroting"
             }
           ]
         },
@@ -93,25 +98,11 @@
                       "Entity": "Data"
                     }
                   },
-                  "Property": "Realisatie YTD 2025"
+                  "Property": "Realisatie YTD"
                 }
               },
-              "queryRef": "Data.Realisatie YTD 2025",
-              "nativeQueryRef": "Realisatie YTD 2025"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Data"
-                    }
-                  },
-                  "Property": "Realisatie YTD 2026"
-                }
-              },
-              "queryRef": "Data.Realisatie YTD 2026",
-              "nativeQueryRef": "Realisatie YTD 2026"
+              "queryRef": "Data.Realisatie YTD",
+              "nativeQueryRef": "Realisatie YTD"
             }
           ]
         }
@@ -131,10 +122,129 @@
           }
         }
       ],
+      "layout": [
+        {
+          "properties": {
+            "arrangement": {
+              "expr": {
+                "Literal": {
+                  "Value": "'stack'"
+                }
+              }
+            },
+            "showGrid": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "bars": [
+        {
+          "properties": {
+            "budgetStyle": {
+              "expr": {
+                "Literal": {
+                  "Value": "'solid'"
+                }
+              }
+            },
+            "budgetRadius": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "actualRadius": {
+              "expr": {
+                "Literal": {
+                  "Value": "7D"
+                }
+              }
+            },
+            "budgetWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "85D"
+                }
+              }
+            },
+            "actualRatio": {
+              "expr": {
+                "Literal": {
+                  "Value": "36D"
+                }
+              }
+            },
+            "periodGap": {
+              "expr": {
+                "Literal": {
+                  "Value": "38D"
+                }
+              }
+            }
+          }
+        }
+      ],
       "colors": [
         {
           "properties": {
+            "actualColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#111827'"
+                    }
+                  }
+                }
+              }
+            },
             "highlightOverrun": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "labels": [
+        {
+          "properties": {
+            "valueFormat": {
+              "expr": {
+                "Literal": {
+                  "Value": "'compact'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "actualLabel": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "'latest'"
+                }
+              }
+            },
+            "content": {
+              "expr": {
+                "Literal": {
+                  "Value": "'value'"
+                }
+              }
+            },
+            "bold": {
               "expr": {
                 "Literal": {
                   "Value": "true"
@@ -144,20 +254,13 @@
           }
         }
       ],
-      "comparison": [
+      "legend": [
         {
           "properties": {
-            "pair1Name": {
+            "position": {
               "expr": {
                 "Literal": {
-                  "Value": "'2025'"
-                }
-              }
-            },
-            "pair2Name": {
-              "expr": {
-                "Literal": {
-                  "Value": "'2026'"
+                  "Value": "'right'"
                 }
               }
             }
@@ -179,7 +282,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Jaarvergelijking 2025 vs 2026'"
+                  "Value": "'Begroting per soort · legenda-veld met zachte radius'"
                 }
               }
             },

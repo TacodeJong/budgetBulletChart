@@ -6,6 +6,9 @@ const host = document.getElementById("host") as HTMLElement;
 const log = document.getElementById("log") as HTMLElement;
 const selected = new Set<string>();
 const query = new URLSearchParams(location.search);
+new URLSearchParams(location.hash.startsWith("#") ? location.hash.slice(1) : "").forEach((value, key) => {
+    query.set(key, value);
+});
 const palette = ["#118DFF", "#12239E", "#E66C37", "#6B007B", "#E044A7"];
 
 function labelBox(): LabelBoxStyle {
@@ -157,16 +160,16 @@ const style: ChartStyle = {
     groupWidth: 1 - Number(query.get("periodGap") || 40) / 100,
     kindGap: Number(query.get("kindGap") || 0) / 100,
     budgetRadius: Number(query.get("radius") || 0),
-    actualRadius: Number(query.get("actualRadius") || 0),
+    actualRadius: Number(query.get("actualRadius") || query.get("radius") || 0),
     showComparisonLabels: true,
-    comparisonColors: ["#A5A5A5", "#118DFF", "#E66C37", "#6B007B"],
+    comparisonColors: (query.get("pairColors") || "#64748B,#0D9488,#E66C37,#6B007B").split(","),
     colorBy: (query.get("colorBy") as ChartStyle["colorBy"]) || "component",
-    revenueColor: "#118DFF",
-    costColor: "#E66C37",
-    netColor: "#118DFF",
-    actualColor: "#252423",
-    highlightOverrun: query.get("overrun") === "1",
-    overrunColor: "#C4314B",
+    revenueColor: query.get("revenue") || "#0F766E",
+    costColor: query.get("cost") || "#1D4ED8",
+    netColor: query.get("net") || query.get("revenue") || "#0F766E",
+    actualColor: query.get("actual") || "#0F172A",
+    highlightOverrun: query.get("overrun") !== "0",
+    overrunColor: query.get("overrunColor") || "#BE123C",
     groupColor: label => palette[panels.findIndex(panel => panel.label === label) % palette.length],
     legendPosition: (query.get("legend") as ChartStyle["legendPosition"]) || "top",
     revenueText: "Jaarbegroting opbrengsten",

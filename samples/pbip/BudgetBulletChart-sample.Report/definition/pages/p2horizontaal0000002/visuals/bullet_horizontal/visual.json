@@ -143,6 +143,34 @@
                   "Value": "'row'"
                 }
               }
+            },
+            "columns": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
+            "showGrid": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "minPlotHeight": {
+              "expr": {
+                "Literal": {
+                  "Value": "130D"
+                }
+              }
+            },
+            "maxPlotHeight": {
+              "expr": {
+                "Literal": {
+                  "Value": "200D"
+                }
+              }
             }
           }
         }
@@ -160,13 +188,112 @@
           }
         }
       ],
+      "bars": [
+        {
+          "properties": {
+            "budgetStyle": {
+              "expr": {
+                "Literal": {
+                  "Value": "'light'"
+                }
+              }
+            },
+            "budgetRadius": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            },
+            "actualRadius": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "budgetWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "90D"
+                }
+              }
+            },
+            "actualRatio": {
+              "expr": {
+                "Literal": {
+                  "Value": "48D"
+                }
+              }
+            },
+            "periodGap": {
+              "expr": {
+                "Literal": {
+                  "Value": "28D"
+                }
+              }
+            },
+            "kindGap": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            }
+          }
+        }
+      ],
       "colors": [
         {
           "properties": {
+            "revenueColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0284C7'"
+                    }
+                  }
+                }
+              }
+            },
+            "costColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#EA580C'"
+                    }
+                  }
+                }
+              }
+            },
+            "actualColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0F172A'"
+                    }
+                  }
+                }
+              }
+            },
             "highlightOverrun": {
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "overrunColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#E11D48'"
+                    }
+                  }
                 }
               }
             }
@@ -180,6 +307,122 @@
               "expr": {
                 "Literal": {
                   "Value": "'dot'"
+                }
+              }
+            },
+            "dotSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "11D"
+                }
+              }
+            },
+            "dotFill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "dotBorderColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#E11D48'"
+                    }
+                  }
+                }
+              }
+            },
+            "dotBorderWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "2D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "labels": [
+        {
+          "properties": {
+            "valueFormat": {
+              "expr": {
+                "Literal": {
+                  "Value": "'compact'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "actualLabel": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "'latest'"
+                }
+              }
+            },
+            "content": {
+              "expr": {
+                "Literal": {
+                  "Value": "'value'"
+                }
+              }
+            },
+            "hPosition": {
+              "expr": {
+                "Literal": {
+                  "Value": "'end'"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "budgetLabel": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "'latest'"
+                }
+              }
+            },
+            "hPosition": {
+              "expr": {
+                "Literal": {
+                  "Value": "'after'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'bottom'"
                 }
               }
             }
@@ -201,7 +444,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Horizontale weergave met target (stip)'"
+                  "Value": "'Horizontaal · afgeronde balken · target als stip'"
                 }
               }
             },

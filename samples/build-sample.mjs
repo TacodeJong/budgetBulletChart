@@ -177,43 +177,135 @@ const afdelingChart = (name, position) => ({
     query: { Category: { projections: [column("Afdeling")] }, Y: { projections: [measure("Realisatie YTD")] } }
 });
 
-page("p1overzicht000000001", "Begroting vs realisatie", [
-    bullet("bullet_main", "Jaarbegroting vs realisatie YTD per afdeling", { x: 16, y: 16, width: 1000, height: 736 }, {
-        period: { projections: [column("Maand")] },
-        group: { projections: [column("Afdeling")] },
-        component: { projections: [column("Component")] },
-        budget: { projections: [measure("Jaarbegroting")] },
-        actual: { projections: [measure("Realisatie YTD")] },
-        target: { projections: [measure("Target YTD")] }
-    }, { layout: { arrangement: "stack" }, grouping: { periodSort: "data" }, colors: { highlightOverrun: true }, target: { shape: "bar" } }),
+const baseQuery = {
+    period: { projections: [column("Maand")] },
+    group: { projections: [column("Afdeling")] },
+    component: { projections: [column("Component")] },
+    budget: { projections: [measure("Jaarbegroting")] },
+    actual: { projections: [measure("Realisatie YTD")] },
+    target: { projections: [measure("Target YTD")] }
+};
+
+// Showcase pages — each demo a distinct style (colors, outline, rounding, orientation).
+page("p1overzicht000000001", "Highlight", [
+    bullet("bullet_main", "Afdelingen · klik de balk rechts om te highlighten", { x: 16, y: 16, width: 1000, height: 736 }, baseQuery, {
+        layout: { arrangement: "stack", showGrid: true },
+        grouping: { periodSort: "data" },
+        bars: { budgetStyle: "solid", budgetRadius: 10, actualRadius: 8, budgetWidth: 82, actualRatio: 42, periodGap: 36 },
+        colors: {
+            revenueColor: "#0F766E", costColor: "#1D4ED8", actualColor: "#0F172A",
+            highlightOverrun: true, overrunColor: "#BE123C"
+        },
+        target: { shape: "bar", barColor: "#F43F5E", barThickness: 3, barLength: 180 },
+        labels: { valueFormat: "compact" },
+        actualLabel: { show: "latest", content: "both", bold: true, color: "#0F172A" },
+        budgetLabel: { show: "latest", color: "#475569" },
+        legend: { position: "top", color: "#334155" }
+    }),
     afdelingChart("bar_afdeling", { x: 1032, y: 16, width: 318, height: 300 })
 ]);
-page("p2horizontaal0000002", "Horizontaal met target", [
-    bullet("bullet_horizontal", "Horizontale weergave met target (stip)", { x: 16, y: 16, width: 1334, height: 736 }, {
+
+page("p2horizontaal0000002", "Horizontaal", [
+    bullet("bullet_horizontal", "Horizontaal · afgeronde balken · target als stip", { x: 16, y: 16, width: 1334, height: 736 }, baseQuery, {
+        layout: { orientation: "horizontal", arrangement: "row", columns: 1, showGrid: false, minPlotHeight: 130, maxPlotHeight: 200 },
+        grouping: { periodSort: "data" },
+        bars: { budgetStyle: "light", budgetRadius: 14, actualRadius: 12, budgetWidth: 90, actualRatio: 48, periodGap: 28, kindGap: 12 },
+        colors: {
+            revenueColor: "#0284C7", costColor: "#EA580C", actualColor: "#0F172A",
+            highlightOverrun: true, overrunColor: "#E11D48"
+        },
+        target: { shape: "dot", dotSize: 11, dotFill: "#FFFFFF", dotBorderColor: "#E11D48", dotBorderWidth: 2 },
+        labels: { valueFormat: "compact" },
+        actualLabel: { show: "latest", content: "value", hPosition: "end", bold: true },
+        budgetLabel: { show: "latest", hPosition: "after" },
+        legend: { position: "bottom" }
+    })
+]);
+
+page("p3outline0000000003", "Outline", [
+    bullet("bullet_outline", "Accent outline · begroting als contour, realisatie gevuld", { x: 16, y: 16, width: 1334, height: 736 }, {
         period: { projections: [column("Maand")] },
         group: { projections: [column("Afdeling")] },
         component: { projections: [column("Component")] },
         budget: { projections: [measure("Jaarbegroting")] },
-        actual: { projections: [measure("Realisatie YTD")] },
-        target: { projections: [measure("Target YTD")] }
-    }, { layout: { orientation: "horizontal", arrangement: "row" }, grouping: { periodSort: "data" }, colors: { highlightOverrun: true }, target: { shape: "dot" } })
+        actual: { projections: [measure("Realisatie YTD")] }
+    }, {
+        layout: { arrangement: "stack", showGrid: false },
+        grouping: { periodSort: "data" },
+        bars: { budgetStyle: "outline", budgetRadius: 12, actualRadius: 10, budgetWidth: 78, actualRatio: 52, actualPosition: "overlay", periodGap: 32 },
+        colors: {
+            revenueColor: "#0D9488", costColor: "#C2410C", actualColor: "#134E4A",
+            highlightOverrun: true, overrunColor: "#BE123C"
+        },
+        labels: { valueFormat: "compact" },
+        actualLabel: { show: "latest", content: "share", bold: true, color: "#134E4A" },
+        budgetLabel: { show: "none" },
+        legend: { position: "top" }
+    })
 ]);
-page("p3jaarvergelijking03", "Jaarvergelijking", [
-    bullet("bullet_years", "Jaarvergelijking 2025 vs 2026", { x: 16, y: 16, width: 1334, height: 736 }, {
+
+page("p4kleuren0000000004", "Kleuren", [
+    bullet("bullet_colors", "Contrasterende kleuren · realisatie naast begroting", { x: 16, y: 16, width: 1334, height: 736 }, {
+        period: { projections: [column("Maand")] },
+        group: { projections: [column("Afdeling")] },
+        component: { projections: [column("Component")] },
+        budget: { projections: [measure("Jaarbegroting")] },
+        actual: { projections: [measure("Realisatie YTD")] }
+    }, {
+        layout: { arrangement: "grid", columns: 3, sharedAxis: true, showGrid: true },
+        grouping: { periodSort: "data" },
+        bars: {
+            budgetStyle: "solid", budgetRadius: 6, actualRadius: 6,
+            actualPosition: "beside", actualGap: 4, actualRatio: 70, budgetWidth: 70, periodGap: 30, kindGap: 8
+        },
+        colors: {
+            revenueColor: "#059669", costColor: "#D97706", actualColor: "#1E3A5F",
+            highlightOverrun: true, overrunColor: "#DC2626"
+        },
+        labels: { valueFormat: "compact" },
+        actualLabel: { show: "latest", content: "value", position: "above", bold: true },
+        budgetLabel: { show: "latest", position: "above", color: "#64748B" },
+        legend: { position: "top" }
+    })
+]);
+
+page("p5jaarvergelijking05", "Jaarvergelijking", [
+    bullet("bullet_years", "2025 vs 2026 · afgerond · aparte paarkleuren", { x: 16, y: 16, width: 1334, height: 736 }, {
         period: { projections: [column("Maand")] },
         component: { projections: [column("Component")] },
         budget: { projections: [measure("Jaarbegroting 2025"), measure("Jaarbegroting 2026")] },
         actual: { projections: [measure("Realisatie YTD 2025"), measure("Realisatie YTD 2026")] }
-    }, { grouping: { periodSort: "data" }, colors: { highlightOverrun: true }, comparison: { pair1Name: "2025", pair2Name: "2026" } })
+    }, {
+        layout: { arrangement: "stack", showGrid: true },
+        grouping: { periodSort: "data" },
+        bars: { budgetStyle: "solid", budgetRadius: 8, actualRadius: 6, budgetWidth: 80, actualRatio: 40, periodGap: 34 },
+        colors: {
+            pair1Color: "#64748B", pair2Color: "#0D9488", actualColor: "#0F172A",
+            highlightOverrun: true, overrunColor: "#E11D48"
+        },
+        comparison: { pair1Name: "2025", pair2Name: "2026" },
+        labels: { valueFormat: "compact" },
+        actualLabel: { show: "latest", content: "value" },
+        legend: { position: "top", pair1Label: "Begroting 2025", pair2Label: "Begroting 2026" }
+    })
 ]);
-page("p4legenda0000000004", "Legenda per soort", [
-    bullet("bullet_legend", "Begroting gekleurd per soort (legenda-veld)", { x: 16, y: 16, width: 1000, height: 736 }, {
+
+page("p6legenda0000000006", "Legenda", [
+    bullet("bullet_legend", "Begroting per soort · legenda-veld met zachte radius", { x: 16, y: 16, width: 1000, height: 736 }, {
         period: { projections: [column("Maand")] },
         group: { projections: [column("Component")] },
         legend: { projections: [column("Soort")] },
         budget: { projections: [measure("Jaarbegroting")] },
         actual: { projections: [measure("Realisatie YTD")] }
-    }, { grouping: { periodSort: "data" }, layout: { arrangement: "stack" } }),
+    }, {
+        grouping: { periodSort: "data" },
+        layout: { arrangement: "stack", showGrid: false },
+        bars: { budgetStyle: "solid", budgetRadius: 9, actualRadius: 7, budgetWidth: 85, actualRatio: 36, periodGap: 38 },
+        colors: { actualColor: "#111827", highlightOverrun: false },
+        labels: { valueFormat: "compact" },
+        actualLabel: { show: "latest", content: "value", bold: true },
+        legend: { position: "right" }
+    }),
     afdelingChart("bar_afdeling_legend", { x: 1032, y: 16, width: 318, height: 300 })
 ]);
 

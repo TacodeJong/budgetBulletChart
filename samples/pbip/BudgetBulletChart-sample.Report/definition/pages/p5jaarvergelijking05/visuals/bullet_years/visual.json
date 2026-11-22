@@ -1,0 +1,371 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "bullet_years",
+  "position": {
+    "x": 16,
+    "y": 16,
+    "width": 1334,
+    "height": 736,
+    "z": 0,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "budgetBulletChart7C2E9A41D85B4F36A0E1B9C47D62F158",
+    "query": {
+      "queryState": {
+        "period": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Maand"
+                }
+              },
+              "queryRef": "Data.Maand",
+              "nativeQueryRef": "Maand",
+              "active": true
+            }
+          ]
+        },
+        "component": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Component"
+                }
+              },
+              "queryRef": "Data.Component",
+              "nativeQueryRef": "Component",
+              "active": true
+            }
+          ]
+        },
+        "budget": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Jaarbegroting 2025"
+                }
+              },
+              "queryRef": "Data.Jaarbegroting 2025",
+              "nativeQueryRef": "Jaarbegroting 2025"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Jaarbegroting 2026"
+                }
+              },
+              "queryRef": "Data.Jaarbegroting 2026",
+              "nativeQueryRef": "Jaarbegroting 2026"
+            }
+          ]
+        },
+        "actual": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Realisatie YTD 2025"
+                }
+              },
+              "queryRef": "Data.Realisatie YTD 2025",
+              "nativeQueryRef": "Realisatie YTD 2025"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Data"
+                    }
+                  },
+                  "Property": "Realisatie YTD 2026"
+                }
+              },
+              "queryRef": "Data.Realisatie YTD 2026",
+              "nativeQueryRef": "Realisatie YTD 2026"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "layout": [
+        {
+          "properties": {
+            "arrangement": {
+              "expr": {
+                "Literal": {
+                  "Value": "'stack'"
+                }
+              }
+            },
+            "showGrid": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "grouping": [
+        {
+          "properties": {
+            "periodSort": {
+              "expr": {
+                "Literal": {
+                  "Value": "'data'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "bars": [
+        {
+          "properties": {
+            "budgetStyle": {
+              "expr": {
+                "Literal": {
+                  "Value": "'solid'"
+                }
+              }
+            },
+            "budgetRadius": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "actualRadius": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "budgetWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "80D"
+                }
+              }
+            },
+            "actualRatio": {
+              "expr": {
+                "Literal": {
+                  "Value": "40D"
+                }
+              }
+            },
+            "periodGap": {
+              "expr": {
+                "Literal": {
+                  "Value": "34D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "colors": [
+        {
+          "properties": {
+            "pair1Color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#64748B'"
+                    }
+                  }
+                }
+              }
+            },
+            "pair2Color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0D9488'"
+                    }
+                  }
+                }
+              }
+            },
+            "actualColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0F172A'"
+                    }
+                  }
+                }
+              }
+            },
+            "highlightOverrun": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "overrunColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#E11D48'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "comparison": [
+        {
+          "properties": {
+            "pair1Name": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2025'"
+                }
+              }
+            },
+            "pair2Name": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2026'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "labels": [
+        {
+          "properties": {
+            "valueFormat": {
+              "expr": {
+                "Literal": {
+                  "Value": "'compact'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "actualLabel": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "'latest'"
+                }
+              }
+            },
+            "content": {
+              "expr": {
+                "Literal": {
+                  "Value": "'value'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'top'"
+                }
+              }
+            },
+            "pair1Label": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Begroting 2025'"
+                }
+              }
+            },
+            "pair2Label": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Begroting 2026'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2025 vs 2026 · afgerond · aparte paarkleuren'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

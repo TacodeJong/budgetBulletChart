@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.0.0/schema.json",
-  "name": "p3jaarvergelijking03",
-  "displayName": "Jaarvergelijking",
+  "name": "p3outline0000000003",
+  "displayName": "Outline",
   "displayOption": "FitToPage",
   "height": 768,
   "width": 1366
