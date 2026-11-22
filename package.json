@@ -1,0 +1,23 @@
+{
+  "name": "budget-bullet-chart",
+  "description": "Power BI visual: annual budget versus cumulative actuals",
+  "version": "1.0.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "pbiviz": "pbiviz",
+    "start": "pbiviz start",
+    "package": "pbiviz package",
+    "test": "tsc -p test/tsconfig.json && node .tmp/unit/test/run.js",
+    "demo": "tsc -p demo/tsconfig.json",
+    "qlik": "npx esbuild qlik/src/extension.ts --bundle --format=iife --target=es2018 --outfile=qlik/begroting-realisatie/begroting-realisatie.js"
+  },
+  "dependencies": {
+    "powerbi-visuals-api": "~5.3.0",
+    "powerbi-visuals-utils-formattingmodel": "^6.0.4",
+    "powerbi-visuals-utils-formattingutils": "^6.1.2"
+  },
+  "devDependencies": {
+    "typescript": "5.5.4"
+  }
+}

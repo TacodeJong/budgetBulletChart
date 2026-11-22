@@ -1,0 +1,26 @@
+{
+  "visual": {
+    "name": "budgetBulletChart",
+    "displayName": "Budget Bullet Chart",
+    "guid": "budgetBulletChart7C2E9A41D85B4F36A0E1B9C47D62F158",
+    "visualClassName": "Visual",
+    "version": "1.0.0.0",
+    "description": "Annual budget versus cumulative actuals per period, split into revenue and costs, with one panel per group.",
+    "supportUrl": "localhost",
+    "gitHubUrl": "https://github.com/TacodeJong/budgetBulletChart"
+  },
+  "apiVersion": "5.3.0",
+  "author": {
+    "name": "T. de Jong",
+    "email": "taco@tictaco.nl"
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": null,
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": null,
+  "stringResources": [],
+  "version": "1.0.0.0"
+}

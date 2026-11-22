@@ -1,0 +1,8 @@
+{
+  "name": "Budget vs actual YTD",
+  "description": "Annual budget versus cumulative actuals per period, split into revenue and costs, with one panel per group.",
+  "type": "visualization",
+  "version": "1.0.0",
+  "author": "T. de Jong",
+  "preview": ""
+}

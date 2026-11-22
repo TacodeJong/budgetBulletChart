@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8">
+    <title>Budget vs actual YTD — Qlik preview</title>
+    <style>
+        html, body { margin: 0; background: #f3f2f1; font-family: "Segoe UI", sans-serif; }
+        #host { width: 980px; height: 680px; margin: 16px; background: #fff; }
+    </style>
+</head>
+<body>
+<div id="host"></div>
+<script>
+    window.define = function (deps, factory) {
+        window.extension = factory({ currApp: function () { return null; } });
+    };
+</script>
+<script src="begroting-realisatie/begroting-realisatie.js"></script>
+<script>
+    var periods = ["2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06"];
+    var series = {
+        "Afdeling Noord": {
+            Opbrengsten: { budget: 1200000, monthly: [90000, 110000, 95000, 120000, 100000, 105000] },
+            Kosten: { budget: 950000, monthly: [70000, 85000, 80000, 90000, 88000, 92000] }
+        },
+        "Afdeling Zuid": {
+            Opbrengsten: { budget: 400000, monthly: [20000, 35000, 30000, 33000, 31000, 40000] },
+            Kosten: { budget: 220000, monthly: [45000, 41000, -5000, 47000, 52000, 49000] }
+        }
+    };
+    var groupElem = { "Afdeling Noord": 1, "Afdeling Zuid": 2 };
+    var kindElem = { Opbrengsten: 1, Kosten: 2 };
+    var matrix = [];
+    Object.keys(series).forEach(function (group) {
+        Object.keys(series[group]).forEach(function (kind) {
+            var spec = series[group][kind];
+            var actual = 0;
+            spec.monthly.forEach(function (value, index) {
+                actual += value;
+                matrix.push([
+                    { qText: periods[index], qNum: 202600 + index + 1, qElemNumber: index + 1, qState: "O" },
+                    { qText: group, qNum: "NaN", qElemNumber: groupElem[group], qState: "O" },
+                    { qText: kind, qNum: "NaN", qElemNumber: kindElem[kind], qState: "O" },
+                    { qText: String(spec.budget), qNum: spec.budget, qElemNumber: 0, qState: "O" },
+                    { qText: String(actual), qNum: actual, qElemNumber: 0, qState: "O" }
+                ]);
+            });
+        });
+    });
+    var query = new URLSearchParams(location.search);
+    var host = document.getElementById("host");
+    var element = {
+        jquery: true,
+        0: host,
+        width: function () { return host.clientWidth; },
+        height: function () { return host.clientHeight; }
+    };
+    var layout = {
+        props: { orientation: query.get("orientation") || "vertical", arrangement: query.get("arrangement") || "stack" },
+        qHyperCube: {
+            qSize: { qcx: 5, qcy: matrix.length },
+            qDimensionInfo: [
+                { qFallbackTitle: "Periode" },
+                { qFallbackTitle: "Indeling" },
+                { qFallbackTitle: "Onderdeel" }
+            ],
+            qMeasureInfo: [
+                { qFallbackTitle: "Jaarbegroting", qNumFormat: { qFmt: "#,##0" } },
+                { qFallbackTitle: "Realisatie YTD", qNumFormat: { qFmt: "#,##0" } }
+            ],
+            qDataPages: [{ qArea: { qTop: 0, qLeft: 0, qWidth: 5, qHeight: matrix.length }, qMatrix: matrix }]
+        }
+    };
+    var api = {
+        backendApi: {
+            selectHyperCubeValues: function () { return Promise.resolve(); },
+            clearSelections: function () {},
+            getData: function () { return Promise.resolve(); }
+        }
+    };
+    window.extension.paint.call(api, element, layout);
+    window.__chart = {
+        paths: host.querySelectorAll("path").length,
+        texts: host.querySelectorAll("text").length,
+        panels: (host.textContent || "").indexOf("Afdeling Noord") >= 0 && (host.textContent || "").indexOf("Afdeling Zuid") >= 0
+    };
+</script>
+</body>
+</html>

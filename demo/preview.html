@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8">
+    <title>Budget vs actual preview</title>
+    <style>
+        html, body { margin: 0; background: #e8e8e8; font-family: "Segoe UI", sans-serif; }
+        #host { width: 900px; height: 620px; margin: 20px; border: 1px solid #cccccc; background: #ffffff; }
+        #log { margin: 0 20px 20px; min-height: 20px; color: #323130; font-size: 12px; }
+        .bva-host { display: flex; flex-direction: column; overflow: hidden; }
+        .bva-scroll { flex: 1 1 auto; min-height: 0; overflow: auto; }
+        .bva-scroll svg { display: block; }
+    </style>
+    <script>
+        var modules = {};
+        function define(name, deps, factory) { modules[name] = { deps: deps, factory: factory, exports: null }; }
+        function requireModule(name) {
+            var entry = modules[name];
+            if (entry.exports) return entry.exports;
+            entry.exports = {};
+            var args = entry.deps.map(function (dep) {
+                if (dep === "require") return requireModule;
+                if (dep === "exports") return entry.exports;
+                return requireModule(dep);
+            });
+            entry.factory.apply(null, args);
+            return entry.exports;
+        }
+    </script>
+</head>
+<body>
+    <div id="host" class="bva-host"></div>
+    <div id="log"></div>
+    <script src="preview.js"></script>
+    <script>requireModule("demo/main");</script>
+</body>
+</html>

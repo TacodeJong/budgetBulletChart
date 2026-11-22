@@ -1,0 +1,340 @@
+{
+  "supportsKeyboardFocus": true,
+  "dataRoles": [
+    {
+      "displayName": "Period",
+      "name": "period",
+      "kind": "Grouping",
+      "description": "One bar group per period. Add a date hierarchy or several fields (year, quarter, month) to drill down; expand all down shows the levels as a nested axis."
+    },
+    {
+      "displayName": "Group",
+      "name": "group",
+      "kind": "Grouping",
+      "description": "One panel per value. A field parameter works here. Leave empty for a single panel.",
+      "preferredTypes": [{ "text": true }]
+    },
+    {
+      "displayName": "Component",
+      "name": "component",
+      "kind": "Grouping",
+      "description": "Revenue or cost. Values that start with one of the revenue values in Grouping count as revenue; everything else counts as cost.",
+      "preferredTypes": [{ "text": true }]
+    },
+    {
+      "displayName": "Legend",
+      "name": "legend",
+      "kind": "Grouping",
+      "description": "Optional. Splits every budget and actual bar into one bar per value and colors the budget bars by value. Set the colors under Colors.",
+      "preferredTypes": [{ "text": true }]
+    },
+    {
+      "displayName": "Budget",
+      "name": "budget",
+      "kind": "Measure",
+      "description": "One or more budget measures. Fields pair by order with Actual YTD: the first budget with the first actual, and so on. Field names (or Rename for this visual) are used as pair names.",
+      "preferredTypes": [{ "numeric": true }]
+    },
+    {
+      "displayName": "Actual YTD",
+      "name": "actual",
+      "kind": "Measure",
+      "description": "One or more actual measures. Fields pair by order with Budget: the first actual with the first budget, and so on.",
+      "preferredTypes": [{ "numeric": true }]
+    },
+    {
+      "displayName": "Target",
+      "name": "target",
+      "kind": "Measure",
+      "description": "Optional. One or more target measures. Fields pair by order with Budget and Actual YTD: the first target belongs to the first pair, and so on.",
+      "preferredTypes": [{ "numeric": true }]
+    },
+    {
+      "displayName": "Tooltips",
+      "name": "tooltips",
+      "kind": "Measure",
+      "description": "Extra fields shown in the tooltip."
+    }
+  ],
+  "dataViewMappings": [
+    {
+      "conditions": [
+        {
+          "period": { "max": 6 },
+          "group": { "max": 1 },
+          "component": { "max": 1 },
+          "legend": { "max": 1 },
+          "budget": { "max": 10 },
+          "actual": { "max": 10 },
+          "target": { "max": 10 },
+          "tooltips": { "max": 10 }
+        }
+      ],
+      "categorical": {
+        "categories": {
+          "select": [
+            { "for": { "in": "period" } },
+            { "for": { "in": "group" } },
+            { "for": { "in": "component" } },
+            { "for": { "in": "legend" } }
+          ],
+          "dataReductionAlgorithm": { "top": { "count": 10000 } }
+        },
+        "values": {
+          "select": [
+            { "for": { "in": "budget" } },
+            { "for": { "in": "actual" } },
+            { "for": { "in": "target" } },
+            { "for": { "in": "tooltips" } }
+          ]
+        }
+      }
+    }
+  ],
+  "objects": {
+    "general": {
+      "properties": {
+        "formatString": { "type": { "formatting": { "formatString": true } } }
+      }
+    },
+    "layout": {
+      "properties": {
+        "orientation": { "type": { "enumeration": [] } },
+        "arrangement": { "type": { "enumeration": [] } },
+        "columns": { "type": { "numeric": true } },
+        "sharedAxis": { "type": { "bool": true } },
+        "showYAxis": { "type": { "bool": true } },
+        "showGrid": { "type": { "bool": true } },
+        "minPlotHeight": { "type": { "numeric": true } },
+        "maxPlotHeight": { "type": { "numeric": true } },
+        "minPeriodWidth": { "type": { "numeric": true } }
+      }
+    },
+    "grouping": {
+      "properties": {
+        "panelMode": { "type": { "enumeration": [] } },
+        "groupSort": { "type": { "enumeration": [] } },
+        "periodSort": { "type": { "enumeration": [] } },
+        "componentMode": { "type": { "enumeration": [] } },
+        "revenueValues": { "type": { "text": true } },
+        "totalGroupName": { "type": { "text": true } }
+      }
+    },
+    "bars": {
+      "properties": {
+        "budgetStyle": { "type": { "enumeration": [] } },
+        "budgetWidth": { "type": { "numeric": true } },
+        "actualStyle": { "type": { "enumeration": [] } },
+        "actualRatio": { "type": { "numeric": true } },
+        "actualPosition": { "type": { "enumeration": [] } },
+        "actualGap": { "type": { "numeric": true } },
+        "periodGap": { "type": { "numeric": true } },
+        "kindGap": { "type": { "numeric": true } },
+        "budgetRadius": { "type": { "numeric": true } },
+        "actualRadius": { "type": { "numeric": true } }
+      }
+    },
+    "comparison": {
+      "properties": {
+        "revenueName": { "type": { "text": true } },
+        "costName": { "type": { "text": true } },
+        "pair1Name": { "type": { "text": true } },
+        "pair2Name": { "type": { "text": true } },
+        "pair3Name": { "type": { "text": true } },
+        "pair4Name": { "type": { "text": true } },
+        "pair5Name": { "type": { "text": true } },
+        "pair6Name": { "type": { "text": true } },
+        "pair7Name": { "type": { "text": true } },
+        "pair8Name": { "type": { "text": true } },
+        "pair9Name": { "type": { "text": true } },
+        "pair10Name": { "type": { "text": true } }
+      }
+    },
+    "xAxis": {
+      "properties": {
+        "show": { "type": { "bool": true } },
+        "fontFamily": { "type": { "formatting": { "fontFamily": true } } },
+        "fontSize": { "type": { "numeric": true } },
+        "bold": { "type": { "bool": true } },
+        "italic": { "type": { "bool": true } },
+        "underline": { "type": { "bool": true } },
+        "color": { "type": { "fill": { "solid": { "color": true } } } },
+        "orientation": { "type": { "enumeration": [] } },
+        "labelLength": { "type": { "enumeration": [] } },
+        "maxLabelWidth": { "type": { "numeric": true } },
+        "showParents": { "type": { "bool": true } },
+        "showSeparators": { "type": { "bool": true } },
+        "showComponents": { "type": { "bool": true } },
+        "showPairs": { "type": { "bool": true } },
+        "pairFontFamily": { "type": { "formatting": { "fontFamily": true } } },
+        "pairFontSize": { "type": { "numeric": true } },
+        "pairBold": { "type": { "bool": true } },
+        "pairItalic": { "type": { "bool": true } },
+        "pairUnderline": { "type": { "bool": true } },
+        "pairOrientation": { "type": { "enumeration": [] } },
+        "pairColorMode": { "type": { "enumeration": [] } },
+        "pairColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "showLine": { "type": { "bool": true } },
+        "lineColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "showTitle": { "type": { "bool": true } },
+        "title": { "type": { "text": true } }
+      }
+    },
+    "colors": {
+      "properties": {
+        "colorBy": { "type": { "enumeration": [] } },
+        "revenueColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "costColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "netColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "pair1Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "pair2Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "pair3Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "pair4Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "pair5Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "pair6Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "pair7Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "pair8Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "pair9Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "pair10Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "actualColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "highlightOverrun": { "type": { "bool": true } },
+        "overrunColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "legendFill": { "type": { "fill": { "solid": { "color": true } } } }
+      }
+    },
+    "legend": {
+      "properties": {
+        "position": { "type": { "enumeration": [] } },
+        "fontFamily": { "type": { "formatting": { "fontFamily": true } } },
+        "fontSize": { "type": { "numeric": true } },
+        "bold": { "type": { "bool": true } },
+        "italic": { "type": { "bool": true } },
+        "underline": { "type": { "bool": true } },
+        "color": { "type": { "fill": { "solid": { "color": true } } } },
+        "revenueLabel": { "type": { "text": true } },
+        "costLabel": { "type": { "text": true } },
+        "budgetLabel": { "type": { "text": true } },
+        "pair1Label": { "type": { "text": true } },
+        "pair2Label": { "type": { "text": true } },
+        "pair3Label": { "type": { "text": true } },
+        "pair4Label": { "type": { "text": true } },
+        "pair5Label": { "type": { "text": true } },
+        "pair6Label": { "type": { "text": true } },
+        "pair7Label": { "type": { "text": true } },
+        "pair8Label": { "type": { "text": true } },
+        "pair9Label": { "type": { "text": true } },
+        "pair10Label": { "type": { "text": true } },
+        "actualLabel": { "type": { "text": true } },
+        "targetLabel": { "type": { "text": true } },
+        "showRevenue": { "type": { "bool": true } },
+        "showCost": { "type": { "bool": true } },
+        "showBudget": { "type": { "bool": true } },
+        "showPair1": { "type": { "bool": true } },
+        "showPair2": { "type": { "bool": true } },
+        "showPair3": { "type": { "bool": true } },
+        "showPair4": { "type": { "bool": true } },
+        "showPair5": { "type": { "bool": true } },
+        "showPair6": { "type": { "bool": true } },
+        "showPair7": { "type": { "bool": true } },
+        "showPair8": { "type": { "bool": true } },
+        "showPair9": { "type": { "bool": true } },
+        "showPair10": { "type": { "bool": true } },
+        "showActual": { "type": { "bool": true } },
+        "showTarget": { "type": { "bool": true } },
+        "showOverrun": { "type": { "bool": true } },
+        "overrunText": { "type": { "text": true } },
+        "shareText": { "type": { "text": true } }
+      }
+    },
+    "target": {
+      "properties": {
+        "shape": { "type": { "enumeration": [] } },
+        "barLength": { "type": { "numeric": true } },
+        "barThickness": { "type": { "numeric": true } },
+        "barColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "dotSize": { "type": { "numeric": true } },
+        "dotFill": { "type": { "fill": { "solid": { "color": true } } } },
+        "dotBorderColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "dotBorderWidth": { "type": { "numeric": true } }
+      }
+    },
+    "labels": {
+      "properties": {
+        "valueFormat": { "type": { "enumeration": [] } },
+        "displayUnits": { "type": { "enumeration": [] } },
+        "decimals": { "type": { "numeric": true } },
+        "fontFamily": { "type": { "formatting": { "fontFamily": true } } },
+        "fontSize": { "type": { "numeric": true } },
+        "bold": { "type": { "bool": true } },
+        "italic": { "type": { "bool": true } },
+        "underline": { "type": { "bool": true } }
+      }
+    },
+    "budgetLabel": {
+      "properties": {
+        "show": { "type": { "enumeration": [] } },
+        "position": { "type": { "enumeration": [] } },
+        "hPosition": { "type": { "enumeration": [] } },
+        "combine": { "type": { "bool": true } },
+        "separator": { "type": { "text": true } },
+        "fontFamily": { "type": { "formatting": { "fontFamily": true } } },
+        "fontSize": { "type": { "numeric": true } },
+        "color": { "type": { "fill": { "solid": { "color": true } } } },
+        "bold": { "type": { "bool": true } },
+        "italic": { "type": { "bool": true } },
+        "underline": { "type": { "bool": true } },
+        "pointer": { "type": { "bool": true } },
+        "pointerColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "outline": { "type": { "bool": true } },
+        "outlineColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "outlineWidth": { "type": { "numeric": true } },
+        "backdrop": { "type": { "bool": true } },
+        "backdropColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "backdropTransparency": { "type": { "numeric": true } },
+        "padding": { "type": { "numeric": true } },
+        "radius": { "type": { "numeric": true } },
+        "borderWidth": { "type": { "numeric": true } },
+        "borderColor": { "type": { "fill": { "solid": { "color": true } } } }
+      }
+    },
+    "actualLabel": {
+      "properties": {
+        "show": { "type": { "enumeration": [] } },
+        "content": { "type": { "enumeration": [] } },
+        "position": { "type": { "enumeration": [] } },
+        "hPosition": { "type": { "enumeration": [] } },
+        "fontFamily": { "type": { "formatting": { "fontFamily": true } } },
+        "fontSize": { "type": { "numeric": true } },
+        "color": { "type": { "fill": { "solid": { "color": true } } } },
+        "bold": { "type": { "bool": true } },
+        "italic": { "type": { "bool": true } },
+        "underline": { "type": { "bool": true } },
+        "pointer": { "type": { "bool": true } },
+        "pointerColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "outline": { "type": { "bool": true } },
+        "outlineColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "outlineWidth": { "type": { "numeric": true } },
+        "backdrop": { "type": { "bool": true } },
+        "backdropColor": { "type": { "fill": { "solid": { "color": true } } } },
+        "backdropTransparency": { "type": { "numeric": true } },
+        "padding": { "type": { "numeric": true } },
+        "radius": { "type": { "numeric": true } },
+        "borderWidth": { "type": { "numeric": true } },
+        "borderColor": { "type": { "fill": { "solid": { "color": true } } } }
+      }
+    }
+  },
+  "tooltips": {
+    "supportedTypes": {
+      "default": true,
+      "canvas": true
+    },
+    "roles": ["tooltips"]
+  },
+  "drilldown": {
+    "roles": ["period"]
+  },
+  "supportsHighlight": true,
+  "supportsMultiVisualSelection": true,
+  "privileges": []
+}
