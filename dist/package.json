@@ -8,7 +8,7 @@
 				"file": "resources/budgetBulletChart7C2E9A41D85B4F36A0E1B9C47D62F158.pbiviz.json"
 			}
 		],
-		"visual": {"name":"budgetBulletChart","displayName":"Budget Bullet Chart","guid":"budgetBulletChart7C2E9A41D85B4F36A0E1B9C47D62F158","visualClassName":"Visual","version":"1.0.0.0","description":"Annual budget versus cumulative actuals per period, split into revenue and costs, with one panel per group.","supportUrl":"localhost","gitHubUrl":"https://github.com/TacodeJong/budgetBulletChart"},
+		"visual": {"name":"budgetBulletChart","displayName":"Budget Bullet Chart","guid":"budgetBulletChart7C2E9A41D85B4F36A0E1B9C47D62F158","visualClassName":"Visual","version":"1.0.0.0","description":"Annual budget versus cumulative actuals per period, split into revenue and costs, with optional small multiples.","supportUrl":"localhost","gitHubUrl":"https://github.com/TacodeJong/budgetBulletChart"},
 		"metadata": {
 			"pbivizjson": {
 				"resourceId": "rId0"

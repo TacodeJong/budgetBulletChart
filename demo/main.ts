@@ -111,6 +111,18 @@ if (targetShape) {
     }));
 }
 
+const zonesOn = query.get("zones") === "1" || query.get("zoneMode") != null;
+const zoneMode = (query.get("zoneMode") as "equal" | "fields" | "percent") || "equal";
+const zoneCount = Number(query.get("zoneCount") || 3);
+if (zonesOn && zoneMode === "fields") {
+    displayPanels.forEach(panel => panel.cells.forEach(cell => {
+        if (cell.budget == null) return;
+        const abs = Math.abs(cell.budget);
+        const sign = cell.budget >= 0 ? 1 : -1;
+        cell.zones = [0.35, 0.7].map(share => sign * abs * share);
+    }));
+}
+
 const model: BudgetModel = {
     hasTarget: !!targetShape,
     periods: periodLevels.map(levels => levels.join(" ")),
@@ -138,6 +150,8 @@ const model: BudgetModel = {
     legendValues: legendNames.map(name => ({ name, color: null, selectionId: null })),
     percentHint: false,
     hasHighlights: query.get("highlight") === "1",
+    zoneFieldCount: zonesOn && zoneMode === "fields" ? 2 : 0,
+    zoneFieldNames: zonesOn && zoneMode === "fields" ? ["Drempel laag", "Drempel midden"] : [],
     names: {
         period: "Periode", group: "Indeling", component: "Onderdeel",
         budget: "Jaarbegroting", actual: "Realisatie YTD", revenue: "Opbrengsten", cost: "Kosten"
@@ -182,6 +196,14 @@ const style: ChartStyle = {
     budgetText: "Jaarbegroting",
     actualText: "Realisatie YTD",
     overrunText: "Boven begroting",
+    zones: {
+        show: zonesOn,
+        mode: zoneMode,
+        count: zoneCount,
+        colors: (query.get("zoneColors") || "#F4B183,#FFE699,#A9D08E,#9DC3E6,#C5A0D5").split(","),
+        names: (query.get("zoneNames") || "Laag,Midden,Hoog,Zone 4,Zone 5").split(","),
+        percents: (query.get("zonePercents") || "34,33,33,0,0").split(",").map(Number)
+    },
     budgetLabel: {
         mode: "latest",
         position: (query.get("budgetLabel") as LabelPosition) || "left",

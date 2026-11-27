@@ -54,6 +54,8 @@ export interface BudgetCell {
     budgetDisplay?: string | null;
     actualDisplay?: string | null;
     targetDisplay?: string | null;
+    /** Absolute zone thresholds from zero (Zones data role), ordered by field order. */
+    zones?: (number | null)[];
 }
 
 export interface BudgetPanel {
@@ -82,6 +84,8 @@ export interface BudgetModel {
     percentHint: boolean;
     hasHighlights: boolean;
     hasTarget?: boolean;
+    zoneFieldCount?: number;
+    zoneFieldNames?: string[];
     legendValues?: LegendValue[];
     names: { period: string; group: string; component: string; budget: string; actual: string; target?: string; legend?: string; revenue: string; cost: string };
     hasPeriodRole: boolean;
@@ -190,9 +194,12 @@ export function buildModel(dataView: any, host: ModelHost, options: ModelOptions
     const budgetCols = allRoles(categorical, "budget");
     const actualCols = allRoles(categorical, "actual");
     const targetCols = allRoles(categorical, "target");
+    const zoneCols = allRoles(categorical, "zones");
     const tooltipCols = allRoles(categorical, "tooltips");
     model.hasPeriodRole = !!periodCol;
     model.hasValueRole = !!(budgetCols.length || actualCols.length);
+    model.zoneFieldCount = zoneCols.length;
+    model.zoneFieldNames = zoneCols.map((column, index) => columnName(column, `Zone ${index + 1}`));
     model.names = {
         period: periodCols.length ? periodCols.map(column => columnName(column, "")).filter(Boolean).join(" / ") : model.names.period,
         group: columnName(groupCol, model.names.group),
@@ -288,6 +295,7 @@ export function buildModel(dataView: any, host: ModelHost, options: ModelOptions
             const highlighted = isHighlighted(budgetCol, row) || isHighlighted(actualCol, row);
             const budgetHighlight = scale(readHighlight(budgetCol, row), sign);
             const actualHighlight = scale(readHighlight(actualCol, row), sign);
+            const zones = zoneCols.map(column => scale(readNumber(column, row), sign));
             const seriesKey = legend == null ? `${kind}:${comparisonIndex}` : `${kind}:${comparisonIndex}:${legend}`;
             const fieldName = comparisonName(budgetCol, actualCol, comparisonIndex);
             const customName = ((options.pairNames || [])[comparisonIndex] || "").trim();
@@ -305,6 +313,7 @@ export function buildModel(dataView: any, host: ModelHost, options: ModelOptions
                 existing.highlighted = existing.highlighted || highlighted;
                 existing.budgetHighlight = addNullable(existing.budgetHighlight, budgetHighlight);
                 existing.actualHighlight = addNullable(existing.actualHighlight, actualHighlight);
+                existing.zones = mergeZones(existing.zones, zones);
                 continue;
             }
             const cell: Draft = {
@@ -331,6 +340,7 @@ export function buildModel(dataView: any, host: ModelHost, options: ModelOptions
                 highlighted,
                 budgetHighlight,
                 actualHighlight,
+                zones: zones.length ? zones : undefined,
                 tooltips: readTooltips(tooltipCols, row, options),
                 selectionId: null,
                 selectionKey: null
@@ -472,6 +482,13 @@ function addNullable(left: number | null, right: number | null): number | null {
     if (left == null) return right;
     if (right == null) return left;
     return left + right;
+}
+
+function mergeZones(left: (number | null)[] | undefined, right: (number | null)[]): (number | null)[] | undefined {
+    if (!right.length) return left;
+    if (!left || !left.length) return right.slice();
+    const length = Math.max(left.length, right.length);
+    return Array.from({ length }, (_, index) => addNullable(left[index] ?? null, right[index] ?? null));
 }
 
 function readNumber(column: any, index: number): number | null {

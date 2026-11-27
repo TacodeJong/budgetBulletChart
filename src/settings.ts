@@ -7,7 +7,7 @@ function options(...pairs: [string, string][]): powerbi.IEnumMember[] {
 
 const chartOrientations = options(["Vertical bars", "vertical"], ["Horizontal bars", "horizontal"]);
 const arrangements = options(["Stacked", "stack"], ["Grid", "grid"], ["Side by side", "row"]);
-const panelModes = options(["One panel per group", "split"], ["Combine into one panel", "combine"]);
+const panelModes = options(["One panel per small multiple", "split"], ["Combine into one panel", "combine"]);
 const groupSorts = options(["Alphabetical", "alpha"], ["Report order", "data"], ["Largest budget first", "budget"], ["Largest actual first", "actual"]);
 const periodSorts = options(["Auto", "auto"], ["Ascending", "asc"], ["Descending", "desc"], ["Report order", "data"]);
 const componentModes = options(["Revenue and costs side by side", "split"], ["Revenue only", "revenue"], ["Costs only", "cost"], ["Net result (revenue minus costs)", "net"]);
@@ -20,7 +20,14 @@ const xAxisOrientations = options(["Auto (rotate when crowded)", "auto"], ["Hori
 const pairColorModes = options(["Pair budget color", "pair"], ["Fixed color", "fixed"]);
 const xAxisLabelLengths = options(["Shorten to fit", "auto"], ["Full text", "full"]);
 const targetShapes = options(["Bar", "bar"], ["Dot", "dot"]);
+const zoneModes = options(
+    ["Equal split of budget", "equal"],
+    ["From Zones fields", "fields"],
+    ["Fixed % of budget", "percent"]
+);
 const legendPositions = options(["Top", "top"], ["Bottom", "bottom"], ["Left", "left"], ["Right", "right"], ["Off", "none"]);
+const MAX_ZONES = 5;
+const ZONE_COLORS = ["#F4B183", "#FFE699", "#A9D08E", "#9DC3E6", "#C5A0D5"];
 const budgetLabelModes = options(["Latest period", "latest"], ["All periods", "all"], ["Off", "none"]);
 const actualLabelModes = options(["Auto", "auto"], ["All periods", "all"], ["Latest period", "latest"], ["Off", "none"]);
 const actualContents = options(["Value", "value"], ["% of budget", "share"], ["Value and % of budget", "both"]);
@@ -121,19 +128,19 @@ class LayoutCard extends formattingSettings.CompositeCard {
 }
 
 class GroupingCard extends formattingSettings.CompositeCard {
-    public panelMode = dropdown("panelMode", "Groups", panelModes);
+    public panelMode = dropdown("panelMode", "Small multiples", panelModes);
     public groupSort = dropdown("groupSort", "Sort panels", groupSorts);
     public periodSort = dropdown("periodSort", "Sort periods", periodSorts);
     public componentMode = dropdown("componentMode", "Components", componentModes);
     public revenueValues = textInput("revenueValues", "Revenue values (comma separated)", "opbrengst, baten, inkomst, omzet, revenue, income");
-    public totalGroupName = textInput("totalGroupName", "Panel title without group", "Totaal");
+    public totalGroupName = textInput("totalGroupName", "Panel title without small multiples", "Totaal");
 
     name: string = "grouping";
-    displayName: string = "Data and grouping";
+    displayName: string = "Data and panels";
     groups: formattingSettings.Group[] = [
         new formattingSettings.Group({
             name: "groupingMain",
-            displayName: "Grouping",
+            displayName: "Panels",
             slices: [this.panelMode, this.groupSort, this.periodSort, this.componentMode]
         }),
         new formattingSettings.Group({
@@ -637,6 +644,87 @@ class TargetCard extends formattingSettings.CompositeCard {
     }
 }
 
+export interface ZoneCardState {
+    colors: string[];
+    names: string[];
+    percents: number[];
+    count: number;
+    mode: string;
+    show: boolean;
+}
+
+class BudgetZonesCard extends formattingSettings.CompositeCard {
+    public show = new formattingSettings.ToggleSwitch({ name: "show", displayName: "Split budget into zones", value: false });
+    public mode = dropdown("mode", "Zone sizes", zoneModes, 0);
+    public count = new formattingSettings.NumUpDown({ name: "count", displayName: "Number of zones", value: 3 });
+    public colors = ZONE_COLORS.map((value, index) => color(`zone${index + 1}Color`, `Zone ${index + 1} color`, value));
+    public names = Array.from({ length: MAX_ZONES }, (_, index) => new formattingSettings.TextInput({
+        name: `zone${index + 1}Name`,
+        displayName: `Zone ${index + 1} label`,
+        value: "",
+        placeholder: `Zone ${index + 1}`
+    }));
+    public percents = [34, 33, 33, 0, 0].map((value, index) => new formattingSettings.NumUpDown({
+        name: `zone${index + 1}Percent`,
+        displayName: `Zone ${index + 1} (%)`,
+        value
+    }));
+
+    name: string = "budgetZones";
+    displayName: string = "Budget zones";
+    groups: formattingSettings.Group[] = [
+        new formattingSettings.Group({
+            name: "zonesMain",
+            displayName: "Zones",
+            slices: [this.show, this.mode, this.count]
+        }),
+        new formattingSettings.Group({
+            name: "zonesAppearance",
+            displayName: "Colors and labels",
+            slices: this.colors.flatMap((slice, index) => [slice, this.names[index]])
+        }),
+        new formattingSettings.Group({
+            name: "zonesPercents",
+            displayName: "Fixed percentages",
+            collapsible: true,
+            slices: this.percents
+        })
+    ];
+
+    public applyVisibility(fieldCount: number): void {
+        const shown = this.show.value;
+        const mode = enumValue(this.mode.value) || "equal";
+        this.mode.visible = shown;
+        this.count.visible = shown && mode !== "fields";
+        this.groups[1].visible = shown;
+        this.groups[2].visible = shown && mode === "percent";
+        const active = shown
+            ? (mode === "fields" ? Math.max(1, Math.min(MAX_ZONES, fieldCount || Number(this.count.value) || 3)) : Math.max(1, Math.min(MAX_ZONES, Math.round(Number(this.count.value) || 3))))
+            : 0;
+        this.colors.forEach((slice, index) => {
+            slice.visible = index < active;
+            this.names[index].visible = index < active;
+            this.percents[index].visible = mode === "percent" && index < active;
+        });
+        if (shown && mode === "fields" && fieldCount === 0) {
+            this.mode.displayName = "Zone sizes (add Zones fields, or pick Equal / Fixed %)";
+        } else {
+            this.mode.displayName = "Zone sizes";
+        }
+    }
+
+    public state(): ZoneCardState {
+        return {
+            show: this.show.value,
+            mode: enumValue(this.mode.value) || "equal",
+            count: Math.max(1, Math.min(MAX_ZONES, Math.round(Number(this.count.value) || 3))),
+            colors: this.colors.map(slice => (slice.value && slice.value.value) || "#118DFF"),
+            names: this.names.map((slice, index) => (slice.value || "").trim() || `Zone ${index + 1}`),
+            percents: this.percents.map(slice => Math.max(0, Number(slice.value) || 0))
+        };
+    }
+}
+
 class LabelsCard extends formattingSettings.CompositeCard {
     public valueFormat = dropdown("valueFormat", "Value format", valueFormats);
     public displayUnits = dropdown("displayUnits", "Display units", displayUnits);
@@ -684,12 +772,13 @@ export class VisualSettings extends formattingSettings.Model {
     public budgetLabel = new BudgetLabelCard();
     public actualLabel = new ActualLabelCard();
     public target = new TargetCard();
+    public budgetZones = new BudgetZonesCard();
     public cards: formattingSettings.Cards[] = [
-        this.layout, this.grouping, this.bars, this.target, this.comparison, this.xAxis, this.budgetLabel, this.actualLabel,
+        this.layout, this.grouping, this.bars, this.budgetZones, this.target, this.comparison, this.xAxis, this.budgetLabel, this.actualLabel,
         this.colors, this.labels, this.legend
     ];
 
-    public applyVisibility(): void {
+    public applyVisibility(zoneFieldCount = 0): void {
         this.layout.columns.visible = enumValue(this.layout.arrangement.value) === "grid";
         const horizontal = this.isHorizontal();
         this.layout.sharedAxis.displayName = horizontal ? "Same value axis for all panels" : "Same y-axis for all panels";
@@ -709,6 +798,7 @@ export class VisualSettings extends formattingSettings.Model {
         this.actualLabel.content.visible = actualShown;
         this.budgetLabel.combine.visible = horizontal && budgetShown && actualShown;
         this.budgetLabel.separator.visible = this.budgetLabel.combine.visible && this.budgetLabel.combine.value;
+        this.budgetZones.applyVisibility(zoneFieldCount);
     }
 
     public isHorizontal(): boolean {

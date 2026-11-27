@@ -103,7 +103,7 @@ export class Visual implements IVisual {
     }
 
     public getFormattingModel(): powerbi.visuals.FormattingModel {
-        this.settings.applyVisibility();
+        this.settings.applyVisibility(this.model.zoneFieldCount || 0);
         const { revenue, cost } = this.componentNames();
         const series = this.model.series || [];
         const pairCount = comparisonPairCount(this.model);
@@ -146,6 +146,7 @@ export class Visual implements IVisual {
             overrun: this.settings.colors.highlightOverrun.value
         });
         this.settings.target.applyVisibility(!!this.model.hasTarget);
+        this.settings.budgetZones.applyVisibility(this.model.zoneFieldCount || 0);
         this.settings.xAxis.applyVisibility(this.model.levelCount, this.model.kinds.length > 1, pairCount > 1 || hasLegend, this.model.names.period || "Periode", this.settings.isHorizontal());
         return this.formattingSettingsService.buildFormattingModel(this.settings);
     }
@@ -322,11 +323,16 @@ export class Visual implements IVisual {
     }
 
     private readStyle(): ChartStyle {
-        const { layout, bars, xAxis, colors, legend, labels, budgetLabel, actualLabel, target } = this.settings;
+        const { layout, bars, xAxis, colors, legend, labels, budgetLabel, actualLabel, target, budgetZones } = this.settings;
         const palette = this.host.colorPalette;
         const { revenue: revenueName, cost: costName } = this.componentNames();
         const budgetName = this.model.names.budget || "Budget";
         const actualName = this.model.names.actual || "Actual YTD";
+        const zoneState = budgetZones.state();
+        const zoneNames = zoneState.names.map((name, index) => {
+            if (name && name !== `Zone ${index + 1}`) return name;
+            return this.model.zoneFieldNames?.[index] || name;
+        });
         return {
             orientation: this.settings.isHorizontal() ? "horizontal" : "vertical",
             arrangement: choice<Arrangement>(layout.arrangement.value, ["stack", "grid", "row"], "stack"),
@@ -421,6 +427,14 @@ export class Visual implements IVisual {
                 dotFill: colorValue(target.dotFill.value, "#FFFFFF"),
                 dotBorderColor: colorValue(target.dotBorderColor.value, "#C4314B"),
                 dotBorderWidth: numberValue(target.dotBorderWidth.value, 2, 0, 10)
+            },
+            zones: {
+                show: zoneState.show,
+                mode: choice(zoneState.mode, ["equal", "fields", "percent"], "equal"),
+                count: zoneState.count,
+                colors: zoneState.colors,
+                names: zoneNames,
+                percents: zoneState.percents
             },
             budgetLabel: {
                 ...readLabelStyle(budgetLabel, "#333333", false, ["left", "side", "above", "inside"], "left"),

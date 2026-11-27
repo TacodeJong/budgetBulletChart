@@ -8,11 +8,12 @@ Power BI custom visual for **annual budget versus year-to-date actuals**, with o
 
 - Vertical or horizontal bullet-style bars (budget range + YTD actual)
 - Separate **Opbrengsten** / **Kosten** series (or year-over-year budget/actual pairs)
-- One panel per category (e.g. department)
+- Small multiples (one panel per category, e.g. department)
 - Budget styles: solid, light, or **outline**
 - Rounded corners, beside/overlay actuals, target line or dot
 - Legend field for extra series coloring
 - Cross-highlight: partial bars and value labels at the highlighted ends
+- **Budget zones** — split the budget bar into colored bands (equal split, fixed %, or absolute thresholds via the optional Zones data well)
 
 ## Install
 

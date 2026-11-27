@@ -8,10 +8,10 @@
       "description": "One bar group per period. Add a date hierarchy or several fields (year, quarter, month) to drill down; expand all down shows the levels as a nested axis."
     },
     {
-      "displayName": "Group",
+      "displayName": "Small multiples",
       "name": "group",
       "kind": "Grouping",
-      "description": "One panel per value. A field parameter works here. Leave empty for a single panel.",
+      "description": "One small-multiple panel per value (e.g. department). A field parameter works here. Leave empty for a single panel.",
       "preferredTypes": [{ "text": true }]
     },
     {
@@ -50,6 +50,13 @@
       "preferredTypes": [{ "numeric": true }]
     },
     {
+      "displayName": "Zones",
+      "name": "zones",
+      "kind": "Measure",
+      "description": "Optional. Absolute thresholds along the budget bar (from zero). Order defines the zones; colors and labels are set under Budget zones. Without fields, use Equal split or Fixed % in formatting.",
+      "preferredTypes": [{ "numeric": true }]
+    },
+    {
       "displayName": "Tooltips",
       "name": "tooltips",
       "kind": "Measure",
@@ -67,6 +74,7 @@
           "budget": { "max": 10 },
           "actual": { "max": 10 },
           "target": { "max": 10 },
+          "zones": { "max": 5 },
           "tooltips": { "max": 10 }
         }
       ],
@@ -85,6 +93,7 @@
             { "for": { "in": "budget" } },
             { "for": { "in": "actual" } },
             { "for": { "in": "target" } },
+            { "for": { "in": "zones" } },
             { "for": { "in": "tooltips" } }
           ]
         }
@@ -256,6 +265,28 @@
         "dotFill": { "type": { "fill": { "solid": { "color": true } } } },
         "dotBorderColor": { "type": { "fill": { "solid": { "color": true } } } },
         "dotBorderWidth": { "type": { "numeric": true } }
+      }
+    },
+    "budgetZones": {
+      "properties": {
+        "show": { "type": { "bool": true } },
+        "mode": { "type": { "enumeration": [] } },
+        "count": { "type": { "numeric": true } },
+        "zone1Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "zone2Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "zone3Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "zone4Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "zone5Color": { "type": { "fill": { "solid": { "color": true } } } },
+        "zone1Name": { "type": { "text": true } },
+        "zone2Name": { "type": { "text": true } },
+        "zone3Name": { "type": { "text": true } },
+        "zone4Name": { "type": { "text": true } },
+        "zone5Name": { "type": { "text": true } },
+        "zone1Percent": { "type": { "numeric": true } },
+        "zone2Percent": { "type": { "numeric": true } },
+        "zone3Percent": { "type": { "numeric": true } },
+        "zone4Percent": { "type": { "numeric": true } },
+        "zone5Percent": { "type": { "numeric": true } }
       }
     },
     "labels": {

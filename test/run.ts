@@ -1,6 +1,6 @@
 import { axisLabel, barLabel, formatSi, tooltipValue } from "../src/format";
 import { ModelOptions, buildModel, classifyKind, comparisonPairCount, defaultOptions, isPercentFormat, parseRevenueValues } from "../src/model";
-import { ChartStyle, axisHeight, barGeometry, barPath, columnCount, computeLayout, fixedAngle, horizontalBarPath, isOverrun, labelSide, labelsCrowded, mix, outerSide, rotatedLabelHeight, periodLabels, periodSpans, seriesSlotsFor, slotsFor, LabelPlacer } from "../src/render";
+import { ChartStyle, axisHeight, barGeometry, barPath, columnCount, computeLayout, fixedAngle, horizontalBarPath, isOverrun, labelSide, labelsCrowded, mix, outerSide, resolveZoneBands, rotatedLabelHeight, periodLabels, periodSpans, seriesSlotsFor, slotsFor, LabelPlacer } from "../src/render";
 import { bandScale, nice, panelScale } from "../src/scale";
 
 const assert = {
@@ -50,6 +50,27 @@ assert.equal(Object.is(panelScale([0, 100], 200).ticks[0], -0), false);
 const band = bandScale(3, 300, 0.1, 0.04);
 assert.near(band.step, 300 / 2.98);
 assert.near(band.x(0) + band.step * 2 + band.bandwidth + band.x(0), 300);
+
+const equalZones = resolveZoneBands({ zones: null }, 100, {
+    zones: { show: true, mode: "equal", count: 4, colors: ["#1", "#2", "#3", "#4"], names: ["A", "B", "C", "D"], percents: [] }
+});
+assert.equal(equalZones.length, 4);
+assert.near(equalZones[0].to, 25);
+assert.near(equalZones[3].to, 100);
+assert.equal(equalZones[1].name, "B");
+
+const fieldZones = resolveZoneBands({ zones: [30, 70] }, 100, {
+    zones: { show: true, mode: "fields", count: 3, colors: ["#a", "#b", "#c"], names: ["Low", "Mid", "High"], percents: [] }
+});
+assert.deepEqual(fieldZones.map(band => [band.from, band.to, band.name]), [[0, 30, "Low"], [30, 70, "Mid"], [70, 100, "High"]]);
+
+const percentZones = resolveZoneBands({}, 200, {
+    zones: { show: true, mode: "percent", count: 2, colors: ["#a", "#b"], names: ["First", "Second"], percents: [25, 75] }
+});
+assert.near(percentZones[0].to, 50);
+assert.near(percentZones[1].to, 200);
+
+assert.equal(resolveZoneBands({}, 100, { zones: { show: false, mode: "equal", count: 3, colors: [], names: [], percents: [] } }).length, 0);
 
 assert.equal(classifyKind("Opbrengsten"), "revenue");
 assert.equal(classifyKind(" opbrengsten "), "revenue");

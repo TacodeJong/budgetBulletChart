@@ -16,6 +16,23 @@ export type ColorBy = "component" | "group";
 export type ChartOrientation = "vertical" | "horizontal";
 export type XAxisOrientation = "auto" | "horizontal" | "diagonal" | "vertical";
 export type XAxisLabelLength = "auto" | "full";
+export type ZoneMode = "equal" | "fields" | "percent";
+
+export interface ZoneStyle {
+    show: boolean;
+    mode: ZoneMode;
+    count: number;
+    colors: string[];
+    names: string[];
+    percents: number[];
+}
+
+export interface ZoneBand {
+    from: number;
+    to: number;
+    color: string;
+    name: string;
+}
 
 export interface LegendStyle {
     fontFamily?: string;
@@ -128,6 +145,7 @@ export interface ChartStyle {
     legend?: LegendStyle;
     target?: TargetStyle;
     targetText?: string;
+    zones?: ZoneStyle;
     legendColor?(name: string, index: number): string;
     formatters: ValueFormatters;
 }
@@ -652,7 +670,10 @@ function legendItems(model: BudgetModel, style: ChartStyle): LegendItem[] {
     const own = (custom: string | undefined, fallback: string) => custom && custom.trim() ? custom : fallback;
     const hidden = legend.hidden || {};
     const comparisonCount = comparisonPairCount(model);
-    const items: LegendItem[] = model.legendValues && model.legendValues.length
+    const zoneLegend = zoneLegendItems(style, model);
+    const items: LegendItem[] = zoneLegend.length
+        ? zoneLegend
+        : model.legendValues && model.legendValues.length
         ? model.legendValues.map((value, index) => ({ label: value.name, color: legendValueColor(style, value.name, index), budget: true }))
         : comparisonCount > 1 && style.colorBy !== "group"
         ? Array.from({ length: comparisonCount }, (_, index) => ({
@@ -672,6 +693,17 @@ function legendItems(model: BudgetModel, style: ChartStyle): LegendItem[] {
     }
     if (style.highlightOverrun && !hidden.overrun) items.push({ label: style.overrunText, color: style.overrunColor, budget: false });
     return items;
+}
+
+function zoneLegendItems(style: ChartStyle, model: BudgetModel): LegendItem[] {
+    const zones = style.zones;
+    if (!zones || !zones.show) return [];
+    const count = zoneCount(zones, model);
+    return Array.from({ length: count }, (_, index) => ({
+        label: zones.names[index] || model.zoneFieldNames?.[index] || `Zone ${index + 1}`,
+        color: zones.colors[index] || "#118DFF",
+        budget: true
+    }));
 }
 
 function drawLegend(root: SVGSVGElement, model: BudgetModel, style: ChartStyle, layout: Layout, legendWidth: number): void {
@@ -1015,10 +1047,12 @@ function drawHorizontalCell(plot: SVGGElement, labelLayer: SVGGElement, placed: 
 
     const partial = model.hasHighlights && cell.highlighted;
     if (cell.budget != null) {
-        drawHighlighted(cellGroup, partial, cell.budget, cell.budgetHighlight, value => {
-            const shape = horizontalBar(geometry.budgetX, geometry.budgetWidth, x.map(value), zero, style.budgetRadius, color);
-            applyBudgetStyle(shape, color, style.budgetStyle);
-            return shape;
+        paintBudgetBar(cellGroup, cell, partial, color, style, model, {
+            horizontal: true,
+            cx: geometry.budgetX,
+            thickness: geometry.budgetWidth,
+            map: value => x.map(value),
+            zero
         });
     }
     const actualColor = isOverrun(cell, style) ? style.overrunColor : style.actualColor;
@@ -1343,10 +1377,12 @@ function drawCell(plot: SVGGElement, labelLayer: SVGGElement, placed: LabelPlace
     const partial = model.hasHighlights && cell.highlighted;
     if (cell.budget != null) {
         const color = budgetColor(cell, panel, style, model);
-        drawHighlighted(cellGroup, partial, cell.budget, cell.budgetHighlight, value => {
-            const shape = bar(geometry.budgetX, budgetWidth, y.map(value), zero, style.budgetRadius, color);
-            applyBudgetStyle(shape, color, style.budgetStyle);
-            return shape;
+        paintBudgetBar(cellGroup, cell, partial, color, style, model, {
+            horizontal: false,
+            cx: geometry.budgetX,
+            thickness: budgetWidth,
+            map: value => y.map(value),
+            zero
         });
     }
 
@@ -1807,6 +1843,114 @@ function applyBudgetStyle(node: SVGElement, color: string, budgetStyle: BudgetSt
     }
 }
 
+function zoneCount(zones: ZoneStyle, model?: BudgetModel): number {
+    if (zones.mode === "fields") {
+        const fromData = model?.zoneFieldCount || 0;
+        return Math.max(1, Math.min(5, fromData || zones.count));
+    }
+    return Math.max(1, Math.min(5, zones.count));
+}
+
+/** Build stacked bands along the budget axis for the value being drawn (full or highlight). */
+export function resolveZoneBands(cell: Pick<BudgetCell, "zones">, value: number, style: Pick<ChartStyle, "zones">, model?: BudgetModel): ZoneBand[] {
+    const zones = style.zones;
+    if (!zones || !zones.show || !value) return [];
+    const sign = value >= 0 ? 1 : -1;
+    const absBudget = Math.abs(value);
+    let edges: number[] = [];
+    const mode = zones.mode === "fields" && !(cell.zones && cell.zones.some(zone => zone != null))
+        ? "equal"
+        : zones.mode;
+
+    if (mode === "fields") {
+        const thresholds = (cell.zones || [])
+            .filter((zone): zone is number => zone != null && isFinite(zone))
+            .map(zone => Math.min(absBudget, Math.abs(zone)))
+            .filter(zone => zone > 1e-9)
+            .sort((left, right) => left - right);
+        const unique: number[] = [];
+        thresholds.forEach(threshold => {
+            if (!unique.length || threshold - unique[unique.length - 1] > 1e-9) unique.push(threshold);
+        });
+        if (!unique.length || unique[unique.length - 1] < absBudget - 1e-9) unique.push(absBudget);
+        else unique[unique.length - 1] = absBudget;
+        edges = unique;
+    } else if (mode === "percent") {
+        const count = zoneCount(zones, model);
+        const shares = zones.percents.slice(0, count).map(share => Math.max(0, share));
+        const total = shares.reduce((sum, share) => sum + share, 0) || 1;
+        let cursor = 0;
+        edges = shares.map(share => {
+            cursor += absBudget * (share / total);
+            return Math.min(absBudget, cursor);
+        });
+        if (edges.length) edges[edges.length - 1] = absBudget;
+    } else {
+        const count = zoneCount(zones, model);
+        edges = Array.from({ length: count }, (_, index) => absBudget * (index + 1) / count);
+    }
+
+    let from = 0;
+    return edges.map((to, index) => {
+        const band: ZoneBand = {
+            from: sign * from,
+            to: sign * to,
+            color: zones.colors[index] || "#118DFF",
+            name: zones.names[index] || model?.zoneFieldNames?.[index] || `Zone ${index + 1}`
+        };
+        from = to;
+        return band;
+    }).filter(band => Math.abs(band.to - band.from) > 1e-9);
+}
+
+interface BudgetPaintGeom {
+    horizontal: boolean;
+    cx: number;
+    thickness: number;
+    map: (value: number) => number;
+    zero: number;
+}
+
+function paintBudgetBar(
+    parent: SVGGElement,
+    cell: BudgetCell,
+    partial: boolean,
+    fallbackColor: string,
+    style: ChartStyle,
+    model: BudgetModel,
+    geom: BudgetPaintGeom
+): void {
+    if (cell.budget == null) return;
+    const draw = (host: SVGGElement, value: number) => {
+        const bands = resolveZoneBands(cell, value, style, model);
+        if (!bands.length) {
+            const shape = geom.horizontal
+                ? horizontalBar(geom.cx, geom.thickness, geom.map(value), geom.zero, style.budgetRadius, fallbackColor)
+                : bar(geom.cx, geom.thickness, geom.map(value), geom.zero, style.budgetRadius, fallbackColor);
+            applyBudgetStyle(shape, fallbackColor, style.budgetStyle);
+            host.appendChild(shape);
+            return;
+        }
+        bands.forEach((band, index) => {
+            const outer = index === bands.length - 1;
+            const radius = outer ? style.budgetRadius : 0;
+            const shape = geom.horizontal
+                ? horizontalBar(geom.cx, geom.thickness, geom.map(band.to), geom.map(band.from), radius, band.color)
+                : bar(geom.cx, geom.thickness, geom.map(band.to), geom.map(band.from), radius, band.color);
+            applyBudgetStyle(shape, band.color, style.budgetStyle);
+            host.appendChild(shape);
+        });
+    };
+    if (!partial) {
+        draw(parent, cell.budget);
+        return;
+    }
+    const faded = svg("g", { opacity: "0.35" });
+    parent.appendChild(faded);
+    draw(faded, cell.budget);
+    if (cell.budgetHighlight != null && cell.budgetHighlight !== 0) draw(parent, cell.budgetHighlight);
+}
+
 export function barPath(x: number, width: number, valueY: number, zeroY: number, radius: number): string {
     const top = Math.min(valueY, zeroY);
     const bottom = Math.max(valueY, zeroY);
@@ -1856,7 +2000,7 @@ function emptyState(model: BudgetModel): HTMLElement {
         body.textContent = model.emptyBody || "";
     } else if (!model.hasPeriodRole || !model.hasValueRole) {
         title.textContent = "Add fields to get started";
-        body.textContent = "Put a period column in Period and at least one measure in Annual budget or Actual YTD. Group adds one panel per value, and Component splits revenue from costs.";
+        body.textContent = "Put a period column in Period and at least one measure in Budget or Actual YTD. Optional Zones measures split the budget bar; colors are under Budget zones.";
     } else {
         title.textContent = "No data";
         body.textContent = "There are no rows with a period for the current filters.";
